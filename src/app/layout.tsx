@@ -5,6 +5,7 @@ import Link from "next/link";
 import "./globals.css";
 
 import { Providers } from "./providers";
+import { getServerAuthSession } from "@/shared/auth/session";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,11 +28,30 @@ const links = [
   { href: "/resumes/search", label: "Резюме" },
 ];
 
-export default function RootLayout({
+const roleLinks: Record<string, { href: string; label: string }> = {
+  APPLICANT: {
+    href: "/applicant/dashboard",
+    label: "Кабинет соискателя",
+  },
+  EMPLOYER: {
+    href: "/employer/dashboard",
+    label: "Кабинет работодателя",
+  },
+  ADMIN: {
+    href: "/admin/dashboard",
+    label: "Админ-панель",
+  },
+};
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerAuthSession();
+  const role = session?.user?.role;
+  const dashboardLink = role ? roleLinks[role] : null;
+
   return (
     <html lang="ru">
       <body
@@ -55,10 +75,10 @@ export default function RootLayout({
                     </Link>
                   ))}
                   <Link
-                    href="/auth/login"
+                    href={dashboardLink?.href ?? "/auth/login"}
                     className="rounded-full bg-slate-900 px-4 py-2 text-white transition hover:bg-slate-700"
                   >
-                    Войти
+                    {dashboardLink?.label ?? "Войти"}
                   </Link>
                 </nav>
               </div>
