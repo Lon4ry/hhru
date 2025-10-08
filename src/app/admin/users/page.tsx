@@ -9,7 +9,9 @@ interface AdminUsersPageProps {
   searchParams: Promise<{ q?: string; role?: string }>;
 }
 
-export default async function AdminUsersPage({ searchParams }: AdminUsersPageProps) {
+export default async function AdminUsersPage({
+  searchParams,
+}: AdminUsersPageProps) {
   const session = await getServerAuthSession();
   if (session?.user?.role !== "ADMIN") {
     redirect("/auth/login");
@@ -17,7 +19,9 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
   const params = await searchParams;
   const where = {
     AND: [
-      params.role ? { role: params.role as "APPLICANT" | "EMPLOYER" | "ADMIN" } : {},
+      params.role
+        ? { role: params.role as "APPLICANT" | "EMPLOYER" | "ADMIN" }
+        : {},
       params.q
         ? {
             OR: [
@@ -39,5 +43,11 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
     orderBy: { createdAt: "desc" },
   });
 
-  return <UsersTable users={users} initialQuery={params.q ?? ""} initialRole={params.role ?? ""} />;
+  return (
+    <UsersTable
+      users={users}
+      initialQuery={params.q ?? ""}
+      initialRole={params.role ?? ""}
+    />
+  );
 }

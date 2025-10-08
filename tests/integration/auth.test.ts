@@ -4,7 +4,9 @@ import prisma from "@/shared/prisma";
 import { Role } from "@prisma/client";
 import { redirect } from "next/navigation";
 
-const credentialsProvider = authOptions.providers.find((provider) => provider.id === "credentials");
+const credentialsProvider = authOptions.providers.find(
+  (provider) => provider.id === "credentials",
+);
 const authorize = credentialsProvider?.options?.authorize;
 
 if (!credentialsProvider || typeof authorize !== "function") {
@@ -37,7 +39,9 @@ describe("Auth actions", () => {
     expect(user?.notifications).toHaveLength(1);
     expect(redirect).toHaveBeenCalledWith("/auth/login?registered=applicant");
 
-    const log = await prisma.systemLog.findFirst({ where: { userEmail: "ivan.petrov@example.com" } });
+    const log = await prisma.systemLog.findFirst({
+      where: { userEmail: "ivan.petrov@example.com" },
+    });
     expect(log?.action).toBe("Регистрация соискателя");
   });
 
@@ -59,7 +63,9 @@ describe("Auth actions", () => {
     expect(employer?.company?.name).toBe("Future LLC");
     expect(redirect).toHaveBeenCalledWith("/auth/login?registered=employer");
 
-    const log = await prisma.systemLog.findFirst({ where: { action: "Регистрация работодателя" } });
+    const log = await prisma.systemLog.findFirst({
+      where: { action: "Регистрация работодателя" },
+    });
     expect(log?.userEmail).toBe("hr@future.ru");
   });
 
@@ -74,8 +80,14 @@ describe("Auth actions", () => {
       },
     });
 
-    const sessionUser = await authorize({ email: user.email, password: "secret123" });
-    expect(sessionUser).toMatchObject({ email: user.email, role: Role.APPLICANT });
+    const sessionUser = await authorize({
+      email: user.email,
+      password: "secret123",
+    });
+    expect(sessionUser).toMatchObject({
+      email: user.email,
+      role: Role.APPLICANT,
+    });
 
     const invalid = await authorize({ email: user.email, password: "wrong" });
     expect(invalid).toBeNull();

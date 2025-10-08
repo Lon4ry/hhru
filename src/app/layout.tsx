@@ -34,7 +34,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-slate-50 font-sans antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-slate-50 font-sans antialiased`}
+      >
         <Providers>
           <div className="flex min-h-screen flex-col bg-slate-50">
             <header className="border-b border-slate-200/60 bg-white/90 backdrop-blur">
@@ -44,7 +46,11 @@ export default function RootLayout({
                 </Link>
                 <nav className="flex items-center gap-6 text-sm font-medium text-slate-600">
                   {links.map((link) => (
-                    <Link key={link.href} href={link.href} className="transition hover:text-slate-900">
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="transition hover:text-slate-900"
+                    >
                       {link.label}
                     </Link>
                   ))}
@@ -58,12 +64,16 @@ export default function RootLayout({
               </div>
             </header>
             <main className="flex-1">
-              <div className="mx-auto w-full max-w-6xl px-6 py-10">{children}</div>
+              <div className="mx-auto w-full max-w-6xl px-6 py-10">
+                {children}
+              </div>
             </main>
             <footer className="border-t border-slate-200/60 bg-white/90 py-6">
               <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
                 <span>© {new Date().getFullYear()} СтаффТехнолоджи</span>
-                <span>Сделано для демонстрации возможностей платформы найма</span>
+                <span>
+                  Сделано для демонстрации возможностей платформы найма
+                </span>
               </div>
             </footer>
           </div>

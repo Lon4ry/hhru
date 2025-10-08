@@ -46,21 +46,45 @@ export default function ApplicantRegisterPage() {
     <div className="mx-auto max-w-3xl">
       <Card className="space-y-6">
         <div className="space-y-2">
-          <h2 className="text-2xl font-semibold text-slate-900">Регистрация соискателя</h2>
+          <h2 className="text-2xl font-semibold text-slate-900">
+            Регистрация соискателя
+          </h2>
           <p className="text-sm text-slate-500">
-            Создайте аккаунт, заполните резюме и начните откликаться на вакансии. Платформа автоматически создаст черновик
-            резюме, который вы сможете доработать позже.
+            Создайте аккаунт, заполните резюме и начните откликаться на
+            вакансии. Платформа автоматически создаст черновик резюме, который
+            вы сможете доработать позже.
           </p>
         </div>
         <form className="grid gap-4" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid gap-4 md:grid-cols-3">
-            <Input label="Фамилия" {...form.register("lastName")} error={form.formState.errors.lastName?.message} />
-            <Input label="Имя" {...form.register("firstName")} error={form.formState.errors.firstName?.message} />
-            <Input label="Отчество" {...form.register("patronymic")} error={form.formState.errors.patronymic?.message} />
+            <Input
+              label="Фамилия"
+              {...form.register("lastName")}
+              error={form.formState.errors.lastName?.message}
+            />
+            <Input
+              label="Имя"
+              {...form.register("firstName")}
+              error={form.formState.errors.firstName?.message}
+            />
+            <Input
+              label="Отчество"
+              {...form.register("patronymic")}
+              error={form.formState.errors.patronymic?.message}
+            />
           </div>
           <div className="grid gap-4 md:grid-cols-2">
-            <Input label="Email" type="email" {...form.register("email")} error={form.formState.errors.email?.message} />
-            <Input label="Телефон" {...form.register("phone")} error={form.formState.errors.phone?.message} />
+            <Input
+              label="Email"
+              type="email"
+              {...form.register("email")}
+              error={form.formState.errors.email?.message}
+            />
+            <Input
+              label="Телефон"
+              {...form.register("phone")}
+              error={form.formState.errors.phone?.message}
+            />
           </div>
           <Input
             label="Желаемая должность"
@@ -80,7 +104,10 @@ export default function ApplicantRegisterPage() {
           </Button>
         </form>
         <p className="text-center text-sm text-slate-500">
-          Уже есть аккаунт? <Link className="text-slate-900 underline" href="/auth/login">Войдите</Link>
+          Уже есть аккаунт?{" "}
+          <Link className="text-slate-900 underline" href="/auth/login">
+            Войдите
+          </Link>
         </p>
       </Card>
     </div>

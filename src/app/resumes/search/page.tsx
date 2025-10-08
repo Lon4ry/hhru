@@ -7,16 +7,19 @@ interface ResumesSearchPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function ResumesSearchPage({ searchParams }: ResumesSearchPageProps) {
+export default async function ResumesSearchPage({
+  searchParams,
+}: ResumesSearchPageProps) {
   const session = await getServerAuthSession();
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q : "";
-  const profession = typeof params.profession === "string" ? params.profession : "";
+  const profession =
+    typeof params.profession === "string" ? params.profession : "";
   const experienceFilters = Array.isArray(params.experience)
     ? params.experience
     : params.experience
-    ? [params.experience]
-    : [];
+      ? [params.experience]
+      : [];
 
   const resumes = await prisma.resume.findMany({
     where: {
@@ -30,14 +33,18 @@ export default async function ResumesSearchPage({ searchParams }: ResumesSearchP
               ],
             }
           : {},
-        profession ? { desiredPosition: { contains: profession, mode: "insensitive" } } : {},
+        profession
+          ? { desiredPosition: { contains: profession, mode: "insensitive" } }
+          : {},
       ],
     },
     include: {
-      user: { select: { id: true, firstName: true, lastName: true, phone: true } },
+      user: {
+        select: { id: true, firstName: true, lastName: true, phone: true },
+      },
       experience: true,
       education: true,
-      skills: true
+      skills: true,
     },
     orderBy: { updatedAt: "desc" },
     take: 30,
@@ -46,11 +53,14 @@ export default async function ResumesSearchPage({ searchParams }: ResumesSearchP
   const filteredResumes = experienceFilters.length
     ? resumes.filter((resume) => {
         const years = calculateExperienceYears(resume.experience);
-        return experienceFilters.some((filter) => matchExperience(filter as string, years));
+        return experienceFilters.some((filter) =>
+          matchExperience(filter as string, years),
+        );
       })
     : resumes;
 
-  const employerId = session?.user?.role === "EMPLOYER" ? Number(session.user.id) : null;
+  const employerId =
+    session?.user?.role === "EMPLOYER" ? Number(session.user.id) : null;
 
   return (
     <ResumesSearchClient
@@ -65,7 +75,9 @@ export default async function ResumesSearchPage({ searchParams }: ResumesSearchP
   );
 }
 
-function calculateExperienceYears(experience: { startDate: Date | null; endDate: Date | null }[]) {
+function calculateExperienceYears(
+  experience: { startDate: Date | null; endDate: Date | null }[],
+) {
   if (experience.length === 0) return 0;
   const sorted = experience
     .map((item) => ({
@@ -77,7 +89,9 @@ function calculateExperienceYears(experience: { startDate: Date | null; endDate:
   const totalMonths = sorted.reduce((acc, item) => {
     const end = item.end ?? new Date();
     const start = item.start ?? new Date();
-    const months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+    const months =
+      (end.getFullYear() - start.getFullYear()) * 12 +
+      (end.getMonth() - start.getMonth());
     return acc + Math.max(months, 0);
   }, 0);
   return Math.round(totalMonths / 12);

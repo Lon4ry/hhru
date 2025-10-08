@@ -5,7 +5,16 @@ import { useRouter } from "next/navigation";
 import type { Vacancy, Company } from "@prisma/client";
 
 import { createApplicationAction } from "@/shared/actions";
-import { Badge, Button, Card, EmptyState, FiltersSheet, Input, Select, Skeleton } from "@/shared/ui";
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  FiltersSheet,
+  Input,
+  Select,
+  Skeleton,
+} from "@/shared/ui";
 import { formatCurrency, formatDate } from "@/shared/lib/utils";
 
 interface JobsSearchClientProps {
@@ -13,7 +22,14 @@ interface JobsSearchClientProps {
   cities: string[];
   specializations: string[];
   applicantId: number | null;
-  initialFilters: { q: string; city: string; specialization: string; employmentType: string; schedule: string; salaryFrom: string };
+  initialFilters: {
+    q: string;
+    city: string;
+    specialization: string;
+    employmentType: string;
+    schedule: string;
+    salaryFrom: string;
+  };
 }
 
 const employmentOptions = [
@@ -34,7 +50,13 @@ const scheduleOptions = [
   { label: "Гибкий", value: "flexible" },
 ];
 
-export function JobsSearchClient({ vacancies, cities, specializations, applicantId, initialFilters }: JobsSearchClientProps) {
+export function JobsSearchClient({
+  vacancies,
+  cities,
+  specializations,
+  applicantId,
+  initialFilters,
+}: JobsSearchClientProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -43,10 +65,13 @@ export function JobsSearchClient({ vacancies, cities, specializations, applicant
     const nextFilters = { ...initialFilters, ...values };
     if (nextFilters.q) params.set("q", nextFilters.q);
     if (nextFilters.city) params.set("city", nextFilters.city);
-    if (nextFilters.specialization) params.set("specialization", nextFilters.specialization);
-    if (nextFilters.employmentType) params.set("employmentType", nextFilters.employmentType);
+    if (nextFilters.specialization)
+      params.set("specialization", nextFilters.specialization);
+    if (nextFilters.employmentType)
+      params.set("employmentType", nextFilters.employmentType);
     if (nextFilters.schedule) params.set("schedule", nextFilters.schedule);
-    if (nextFilters.salaryFrom) params.set("salaryFrom", nextFilters.salaryFrom);
+    if (nextFilters.salaryFrom)
+      params.set("salaryFrom", nextFilters.salaryFrom);
     router.push(`/jobs/search?${params.toString()}`);
   };
 
@@ -68,15 +93,23 @@ export function JobsSearchClient({ vacancies, cities, specializations, applicant
       <div className="grid gap-3 md:grid-cols-2">
         <Select
           label="Город"
-          options={[{ label: "Все города", value: "" }, ...cities.map((city) => ({ label: city, value: city }))]}
+          options={[
+            { label: "Все города", value: "" },
+            ...cities.map((city) => ({ label: city, value: city })),
+          ]}
           value={initialFilters.city}
           onChange={(event) => applyFilters({ city: event.target.value })}
         />
         <Select
           label="Специализация"
-          options={[{ label: "Все специализации", value: "" }, ...specializations.map((item) => ({ label: item, value: item }))]}
+          options={[
+            { label: "Все специализации", value: "" },
+            ...specializations.map((item) => ({ label: item, value: item })),
+          ]}
           value={initialFilters.specialization}
-          onChange={(event) => applyFilters({ specialization: event.target.value })}
+          onChange={(event) =>
+            applyFilters({ specialization: event.target.value })
+          }
         />
       </div>
       <div className="grid gap-3 md:grid-cols-2">
@@ -84,7 +117,9 @@ export function JobsSearchClient({ vacancies, cities, specializations, applicant
           label="Тип занятости"
           options={employmentOptions}
           value={initialFilters.employmentType}
-          onChange={(event) => applyFilters({ employmentType: event.target.value })}
+          onChange={(event) =>
+            applyFilters({ employmentType: event.target.value })
+          }
         />
         <Select
           label="График"
@@ -114,40 +149,66 @@ export function JobsSearchClient({ vacancies, cities, specializations, applicant
       <div className="grid gap-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900">Поиск вакансий</h1>
-            <p className="text-sm text-slate-500">Найдите подходящую позицию и откликнитесь за пару кликов.</p>
+            <h1 className="text-2xl font-semibold text-slate-900">
+              Поиск вакансий
+            </h1>
+            <p className="text-sm text-slate-500">
+              Найдите подходящую позицию и откликнитесь за пару кликов.
+            </p>
           </div>
           <FiltersSheet title="Фильтры вакансий">{filterForm}</FiltersSheet>
         </div>
         {vacancies.length === 0 ? (
-          <EmptyState title="Вакансий не найдено" description="Попробуйте изменить условия поиска." />
+          <EmptyState
+            title="Вакансий не найдено"
+            description="Попробуйте изменить условия поиска."
+          />
         ) : (
           <div className="grid gap-4">
             {vacancies.map((vacancy) => (
               <Card key={vacancy.id} className="space-y-3">
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                   <div>
-                    <h2 className="text-xl font-semibold text-slate-900">{vacancy.title}</h2>
+                    <h2 className="text-xl font-semibold text-slate-900">
+                      {vacancy.title}
+                    </h2>
                     <p className="text-sm text-slate-500">
-                      {(vacancy.company?.name ?? "Компания") + " • " + vacancy.city}
+                      {(vacancy.company?.name ?? "Компания") +
+                        " • " +
+                        vacancy.city}
                     </p>
                     <p className="text-sm text-slate-500">
-                      {formatCurrency(vacancy.salaryFrom)} — {formatCurrency(vacancy.salaryTo)}
+                      {formatCurrency(vacancy.salaryFrom)} —{" "}
+                      {formatCurrency(vacancy.salaryTo)}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    {vacancy.specialization && <Badge variant="neutral">{vacancy.specialization}</Badge>}
-                    {vacancy.employmentType && <Badge variant="neutral">{translateEmployment(vacancy.employmentType)}</Badge>}
-                    <span className="text-xs text-slate-400">{formatDate(vacancy.createdAt)}</span>
+                    {vacancy.specialization && (
+                      <Badge variant="neutral">{vacancy.specialization}</Badge>
+                    )}
+                    {vacancy.employmentType && (
+                      <Badge variant="neutral">
+                        {translateEmployment(vacancy.employmentType)}
+                      </Badge>
+                    )}
+                    <span className="text-xs text-slate-400">
+                      {formatDate(vacancy.createdAt)}
+                    </span>
                   </div>
                 </div>
                 <p className="text-sm text-slate-600">{vacancy.description}</p>
                 <div className="grid gap-2 text-sm text-slate-600">
                   <p>
-                    <span className="font-semibold text-slate-800">Требования:</span> {vacancy.requirements}
+                    <span className="font-semibold text-slate-800">
+                      Требования:
+                    </span>{" "}
+                    {vacancy.requirements}
                   </p>
                   <p>
-                    <span className="font-semibold text-slate-800">Условия:</span> {vacancy.conditions}
+                    <span className="font-semibold text-slate-800">
+                      Условия:
+                    </span>{" "}
+                    {vacancy.conditions}
                   </p>
                 </div>
                 <div className="flex flex-col items-end gap-2">

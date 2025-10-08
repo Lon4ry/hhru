@@ -19,7 +19,9 @@ describe("Input", () => {
 
     const input = screen.getByPlaceholderText("Введите запрос");
     expect(screen.getByText("Поиск")).toBeInTheDocument();
-    expect(screen.getByText("Можно вводить ключевые слова")).toBeInTheDocument();
+    expect(
+      screen.getByText("Можно вводить ключевые слова"),
+    ).toBeInTheDocument();
 
     await user.type(input, "React");
 

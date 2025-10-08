@@ -43,7 +43,11 @@ describe("ResumesSearchClient filters and actions", () => {
     user: { id: 55, firstName: "Мария", lastName: "Кузнецова", phone: "+7" },
   } as const;
 
-  const initialFilters = { q: "", profession: "", experience: [] as (string | undefined)[] };
+  const initialFilters = {
+    q: "",
+    profession: "",
+    experience: [] as (string | undefined)[],
+  };
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -70,8 +74,12 @@ describe("ResumesSearchClient filters and actions", () => {
     await user.click(screen.getByRole("checkbox", { name: "1–3 года" }));
     await user.click(screen.getByRole("button", { name: "Сохранить" }));
 
-    expect(push).toHaveBeenCalledWith(expect.stringContaining("profession=Product+Manager"));
-    expect(push).toHaveBeenCalledWith(expect.stringContaining("experience=1-3"));
+    expect(push).toHaveBeenCalledWith(
+      expect.stringContaining("profession=Product+Manager"),
+    );
+    expect(push).toHaveBeenCalledWith(
+      expect.stringContaining("experience=1-3"),
+    );
   });
 
   it("invites applicant when employer clicks CTA", async () => {
@@ -85,9 +93,14 @@ describe("ResumesSearchClient filters and actions", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Пригласить на собеседование" }));
+    await user.click(
+      screen.getByRole("button", { name: "Пригласить на собеседование" }),
+    );
 
-    expect(inviteApplicantToInterview).toHaveBeenCalledWith({ employerId: 42, resumeId: baseResume.id });
+    expect(inviteApplicantToInterview).toHaveBeenCalledWith({
+      employerId: 42,
+      resumeId: baseResume.id,
+    });
   });
 
   it("disables invite button for guests", () => {
@@ -99,6 +112,8 @@ describe("ResumesSearchClient filters and actions", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Доступно работодателям" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Доступно работодателям" }),
+    ).toBeDisabled();
   });
 });

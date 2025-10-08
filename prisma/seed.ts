@@ -1,17 +1,23 @@
-import { ApplicationStatus, EmploymentType, PrismaClient, Role, ScheduleType } from "@prisma/client";
+import {
+  ApplicationStatus,
+  EmploymentType,
+  PrismaClient,
+  Role,
+  ScheduleType,
+} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding database...');
+  console.log("🌱 Seeding database...");
 
   // --- Admin ---
   const admin = await prisma.user.create({
     data: {
-      email: 'admin@stafftech.ru',
-      password: 'admin123',
-      firstName: 'Администратор',
-      lastName: 'Системы',
+      email: "admin@stafftech.ru",
+      password: "admin123",
+      firstName: "Администратор",
+      lastName: "Системы",
       role: Role.ADMIN,
     },
   });
@@ -19,19 +25,20 @@ async function main() {
   // --- Employers & Companies ---
   const employer1 = await prisma.user.create({
     data: {
-      email: 'hr@techcorp.ru',
-      password: 'password123',
-      firstName: 'Анна',
-      lastName: 'Петрова',
+      email: "hr@techcorp.ru",
+      password: "password123",
+      firstName: "Анна",
+      lastName: "Петрова",
       role: Role.EMPLOYER,
-      phone: '+7 (999) 123-45-67',
+      phone: "+7 (999) 123-45-67",
       company: {
         create: {
-          name: 'TechCorp',
-          inn: '7701234567',
-          email: 'contact@techcorp.ru',
-          phone: '+7 (999) 111-22-33',
-          description: 'IT-компания, специализирующаяся на разработке корпоративных систем',
+          name: "TechCorp",
+          inn: "7701234567",
+          email: "contact@techcorp.ru",
+          phone: "+7 (999) 111-22-33",
+          description:
+            "IT-компания, специализирующаяся на разработке корпоративных систем",
         },
       },
     },
@@ -40,18 +47,18 @@ async function main() {
 
   const employer2 = await prisma.user.create({
     data: {
-      email: 'jobs@finlogic.ru',
-      password: 'password123',
-      firstName: 'Сергей',
-      lastName: 'Иванов',
+      email: "jobs@finlogic.ru",
+      password: "password123",
+      firstName: "Сергей",
+      lastName: "Иванов",
       role: Role.EMPLOYER,
       company: {
         create: {
-          name: 'FinLogic',
-          inn: '7723456789',
-          email: 'info@finlogic.ru',
-          phone: '+7 (999) 222-33-44',
-          description: 'Финансовые решения и консалтинг',
+          name: "FinLogic",
+          inn: "7723456789",
+          email: "info@finlogic.ru",
+          phone: "+7 (999) 222-33-44",
+          description: "Финансовые решения и консалтинг",
         },
       },
     },
@@ -61,12 +68,12 @@ async function main() {
   // --- Vacancies ---
   const vacancy1 = await prisma.vacancy.create({
     data: {
-      title: 'Frontend Developer',
-      specialization: 'Web Development',
-      description: 'Разработка интерфейсов на React',
-      requirements: 'React, TypeScript, TailwindCSS',
-      conditions: 'Удалённо, график гибкий',
-      city: 'Москва',
+      title: "Frontend Developer",
+      specialization: "Web Development",
+      description: "Разработка интерфейсов на React",
+      requirements: "React, TypeScript, TailwindCSS",
+      conditions: "Удалённо, график гибкий",
+      city: "Москва",
       employmentType: EmploymentType.full_time,
       schedule: ScheduleType.remote,
       salaryFrom: 120000,
@@ -78,12 +85,12 @@ async function main() {
 
   const vacancy2 = await prisma.vacancy.create({
     data: {
-      title: 'Data Analyst',
-      specialization: 'Analytics',
-      description: 'Работа с BI-инструментами и SQL',
-      requirements: 'SQL, PowerBI, Python',
-      conditions: 'Офис, гибкий график',
-      city: 'Санкт-Петербург',
+      title: "Data Analyst",
+      specialization: "Analytics",
+      description: "Работа с BI-инструментами и SQL",
+      requirements: "SQL, PowerBI, Python",
+      conditions: "Офис, гибкий график",
+      city: "Санкт-Петербург",
       employmentType: EmploymentType.full_time,
       schedule: ScheduleType.hybrid,
       salaryFrom: 90000,
@@ -96,25 +103,25 @@ async function main() {
   // --- Applicants & Resumes ---
   const applicant1 = await prisma.user.create({
     data: {
-      email: 'alex@example.com',
-      password: 'test123',
-      firstName: 'Алексей',
-      lastName: 'Николаев',
-      patronymic: 'Игоревич',
+      email: "alex@example.com",
+      password: "test123",
+      firstName: "Алексей",
+      lastName: "Николаев",
+      patronymic: "Игоревич",
       role: Role.APPLICANT,
       resume: {
         create: {
-          desiredPosition: 'Frontend Developer',
-          summary: 'Опыт работы с React, Next.js, TailwindCSS',
-          city: 'Москва',
+          desiredPosition: "Frontend Developer",
+          summary: "Опыт работы с React, Next.js, TailwindCSS",
+          city: "Москва",
           expectedSalary: 150000,
           employmentType: EmploymentType.full_time,
           education: {
             create: [
               {
-                institution: 'МГТУ им. Баумана',
-                degree: 'Бакалавр',
-                field: 'Информатика и вычислительная техника',
+                institution: "МГТУ им. Баумана",
+                degree: "Бакалавр",
+                field: "Информатика и вычислительная техника",
                 startYear: 2017,
                 endYear: 2021,
               },
@@ -123,19 +130,19 @@ async function main() {
           experience: {
             create: [
               {
-                company: 'WebDev Studio',
-                position: 'Junior Frontend Developer',
-                description: 'Разработка SPA-приложений на React',
-                startDate: new Date('2021-07-01'),
-                endDate: new Date('2023-02-01'),
+                company: "WebDev Studio",
+                position: "Junior Frontend Developer",
+                description: "Разработка SPA-приложений на React",
+                startDate: new Date("2021-07-01"),
+                endDate: new Date("2023-02-01"),
               },
             ],
           },
-          Skill: {
+          skills: {
             create: [
-              { skill: 'React' },
-              { skill: 'TypeScript' },
-              { skill: 'TailwindCSS' },
+              { skill: "React" },
+              { skill: "TypeScript" },
+              { skill: "TailwindCSS" },
             ],
           },
         },
@@ -146,24 +153,24 @@ async function main() {
 
   const applicant2 = await prisma.user.create({
     data: {
-      email: 'maria@example.com',
-      password: 'test123',
-      firstName: 'Мария',
-      lastName: 'Кузнецова',
+      email: "maria@example.com",
+      password: "test123",
+      firstName: "Мария",
+      lastName: "Кузнецова",
       role: Role.APPLICANT,
       resume: {
         create: {
-          desiredPosition: 'Data Analyst',
-          summary: 'Опыт анализа данных и визуализации',
-          city: 'Санкт-Петербург',
+          desiredPosition: "Data Analyst",
+          summary: "Опыт анализа данных и визуализации",
+          city: "Санкт-Петербург",
           expectedSalary: 100000,
           employmentType: EmploymentType.full_time,
           education: {
             create: [
               {
-                institution: 'СПбГУ',
-                degree: 'Магистр',
-                field: 'Прикладная математика',
+                institution: "СПбГУ",
+                degree: "Магистр",
+                field: "Прикладная математика",
                 startYear: 2015,
                 endYear: 2021,
               },
@@ -172,19 +179,19 @@ async function main() {
           experience: {
             create: [
               {
-                company: 'FinData',
-                position: 'Data Analyst',
-                description: 'Построение отчётов и визуализаций',
-                startDate: new Date('2021-01-01'),
-                endDate: new Date('2023-01-01'),
+                company: "FinData",
+                position: "Data Analyst",
+                description: "Построение отчётов и визуализаций",
+                startDate: new Date("2021-01-01"),
+                endDate: new Date("2023-01-01"),
               },
             ],
           },
-          Skill: {
+          skills: {
             create: [
-              { skill: 'SQL' },
-              { skill: 'PowerBI' },
-              { skill: 'Python' },
+              { skill: "SQL" },
+              { skill: "PowerBI" },
+              { skill: "Python" },
             ],
           },
         },
@@ -195,33 +202,33 @@ async function main() {
 
   const applicant3 = await prisma.user.create({
     data: {
-      email: 'ivan@example.com',
-      password: 'test123',
-      firstName: 'Иван',
-      lastName: 'Соколов',
+      email: "ivan@example.com",
+      password: "test123",
+      firstName: "Иван",
+      lastName: "Соколов",
       role: Role.APPLICANT,
       resume: {
         create: {
-          desiredPosition: 'Project Manager',
-          city: 'Москва',
+          desiredPosition: "Project Manager",
+          city: "Москва",
           expectedSalary: 180000,
           employmentType: EmploymentType.full_time,
-          summary: 'Опыт управления IT-проектами более 5 лет',
+          summary: "Опыт управления IT-проектами более 5 лет",
           education: {
             create: [
               {
-                institution: 'ВШЭ',
-                degree: 'Магистр менеджмента',
+                institution: "ВШЭ",
+                degree: "Магистр менеджмента",
                 startYear: 2012,
                 endYear: 2018,
               },
             ],
           },
-          Skill: {
+          skills: {
             create: [
-              { skill: 'Agile' },
-              { skill: 'Scrum' },
-              { skill: 'Kanban' },
+              { skill: "Agile" },
+              { skill: "Scrum" },
+              { skill: "Kanban" },
             ],
           },
         },
@@ -256,19 +263,21 @@ async function main() {
   await prisma.notification.createMany({
     data: [
       {
-        title: 'Новое приглашение на собеседование',
-        message: 'Работодатель FinLogic пригласил вас на интервью по вакансии Data Analyst.',
+        title: "Новое приглашение на собеседование",
+        message:
+          "Работодатель FinLogic пригласил вас на интервью по вакансии Data Analyst.",
         userId: applicant2.id,
       },
       {
-        title: 'Новый отклик на вакансию',
-        message: 'Поступил отклик от Алексея Николаева на вакансию Frontend Developer.',
+        title: "Новый отклик на вакансию",
+        message:
+          "Поступил отклик от Алексея Николаева на вакансию Frontend Developer.",
         userId: employer1.id,
       },
     ],
   });
 
-  console.log('✅ Seeding completed successfully!');
+  console.log("✅ Seeding completed successfully!");
 }
 
 main()

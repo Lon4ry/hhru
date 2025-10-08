@@ -5,7 +5,18 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import type { User, Company, Resume } from "@prisma/client";
 
-import { Button, Card, Input, Select, Table, TableBody, TableCell, TableHeadCell, TableHeader, TableRow } from "@/shared/ui";
+import {
+  Button,
+  Card,
+  Input,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableHeadCell,
+  TableHeader,
+  TableRow,
+} from "@/shared/ui";
 
 interface UsersTableProps {
   users: (User & { company: Company | null; resume: Resume | null })[];
@@ -20,7 +31,11 @@ const roleOptions = [
   { label: "Администраторы", value: "ADMIN" },
 ];
 
-export function UsersTable({ users, initialQuery, initialRole }: UsersTableProps) {
+export function UsersTable({
+  users,
+  initialQuery,
+  initialRole,
+}: UsersTableProps) {
   const router = useRouter();
   const form = useForm({
     defaultValues: {
@@ -36,9 +51,13 @@ export function UsersTable({ users, initialQuery, initialRole }: UsersTableProps
       `${user.lastName} ${user.firstName}`.trim(),
       translateRole(user.role),
       user.phone ?? "",
-      user.role === "EMPLOYER" ? user.company?.name ?? "" : user.resume?.desiredPosition ?? "",
+      user.role === "EMPLOYER"
+        ? (user.company?.name ?? "")
+        : (user.resume?.desiredPosition ?? ""),
     ]);
-    return [header, ...rows].map((row) => row.map((col) => `"${col}"`).join(";")).join("\n");
+    return [header, ...rows]
+      .map((row) => row.map((col) => `"${col}"`).join(";"))
+      .join("\n");
   }, [users]);
 
   const downloadCsv = () => {
@@ -62,8 +81,15 @@ export function UsersTable({ users, initialQuery, initialRole }: UsersTableProps
   return (
     <div className="grid gap-4">
       <Card>
-        <form className="grid gap-4 md:grid-cols-[2fr_1fr_auto]" onSubmit={submit}>
-          <Input label="Поиск" placeholder="Email или фамилия" {...form.register("q")} />
+        <form
+          className="grid gap-4 md:grid-cols-[2fr_1fr_auto]"
+          onSubmit={submit}
+        >
+          <Input
+            label="Поиск"
+            placeholder="Email или фамилия"
+            {...form.register("q")}
+          />
           <Select
             label="Роль"
             options={roleOptions}
@@ -97,7 +123,9 @@ export function UsersTable({ users, initialQuery, initialRole }: UsersTableProps
               <TableCell>{translateRole(user.role)}</TableCell>
               <TableCell>{user.phone ?? "—"}</TableCell>
               <TableCell>
-                {user.role === "EMPLOYER" ? user.company?.name ?? "—" : user.resume?.desiredPosition ?? "—"}
+                {user.role === "EMPLOYER"
+                  ? (user.company?.name ?? "—")
+                  : (user.resume?.desiredPosition ?? "—")}
               </TableCell>
             </TableRow>
           ))}

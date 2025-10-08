@@ -7,13 +7,17 @@ interface JobsSearchPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-export default async function JobsSearchPage({ searchParams }: JobsSearchPageProps) {
+export default async function JobsSearchPage({
+  searchParams,
+}: JobsSearchPageProps) {
   const session = await getServerAuthSession();
   const params = await searchParams;
   const q = typeof params.q === "string" ? params.q : "";
   const city = typeof params.city === "string" ? params.city : "";
-  const specialization = typeof params.specialization === "string" ? params.specialization : "";
-  const employmentType = typeof params.employmentType === "string" ? params.employmentType : "";
+  const specialization =
+    typeof params.specialization === "string" ? params.specialization : "";
+  const employmentType =
+    typeof params.employmentType === "string" ? params.employmentType : "";
   const schedule = typeof params.schedule === "string" ? params.schedule : "";
   const salaryFrom = params.salaryFrom ? Number(params.salaryFrom) : undefined;
 
@@ -58,15 +62,27 @@ export default async function JobsSearchPage({ searchParams }: JobsSearchPagePro
     }),
   ]);
 
-  const applicantId = session?.user?.role === "APPLICANT" ? Number(session.user.id) : null;
+  const applicantId =
+    session?.user?.role === "APPLICANT" ? Number(session.user.id) : null;
 
   return (
     <JobsSearchClient
       vacancies={vacancies}
       cities={cities.map((item) => item.city).filter(Boolean) as string[]}
-      specializations={specializations.map((item) => item.specialization).filter(Boolean) as string[]}
+      specializations={
+        specializations
+          .map((item) => item.specialization)
+          .filter(Boolean) as string[]
+      }
       applicantId={applicantId}
-      initialFilters={{ q, city, specialization, employmentType, schedule, salaryFrom: salaryFrom?.toString() ?? "" }}
+      initialFilters={{
+        q,
+        city,
+        specialization,
+        employmentType,
+        schedule,
+        salaryFrom: salaryFrom?.toString() ?? "",
+      }}
     />
   );
 }

@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const isValid = (credentials.password ===user.password);
+        const isValid = credentials.password === user.password;
         if (!isValid) {
           return null;
         }

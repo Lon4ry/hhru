@@ -23,10 +23,16 @@ test.describe("Authentication", () => {
   test("logs in applicant and shows dashboard stats", async ({ page }) => {
     await login(page, "alex@example.com", "test123");
 
-    await expect(page.getByRole("heading", { name: "Технологичный найм: соединяем лучших специалистов с амбициозными компаниями" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", {
+        name: "Технологичный найм: соединяем лучших специалистов с амбициозными компаниями",
+      }),
+    ).toBeVisible();
 
     await page.goto("/applicant/dashboard");
-    await expect(page.getByRole("heading", { name: "Уведомления" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Уведомления" }),
+    ).toBeVisible();
     await expect(page.getByText("Всего откликов")).toBeVisible();
   });
 });

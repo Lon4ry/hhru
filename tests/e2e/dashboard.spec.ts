@@ -17,7 +17,9 @@ test.describe("Dashboards", () => {
     await page.goto("/admin/dashboard");
     await expect(page.getByText("Всего пользователей")).toBeVisible();
     await expect(page.getByText("Активные вакансии")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Системный журнал" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Системный журнал" }),
+    ).toBeVisible();
     await expect(page.getByText("Регистрация", { exact: false })).toBeVisible();
   });
 });

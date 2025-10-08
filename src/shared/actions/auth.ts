@@ -44,7 +44,8 @@ export async function registerApplicant(formData: unknown) {
       notifications: {
         create: {
           title: "Добро пожаловать!",
-          message: "Добавьте образование и опыт, чтобы раскрыть свой потенциал.",
+          message:
+            "Добавьте образование и опыт, чтобы раскрыть свой потенциал.",
         },
       },
     },

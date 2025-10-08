@@ -9,7 +9,10 @@ const config: Config = {
       displayName: "unit",
       preset: "ts-jest",
       testEnvironment: "jsdom",
-      testMatch: ["<rootDir>/tests/unit/**/*.test.ts", "<rootDir>/tests/unit/**/*.test.tsx"],
+      testMatch: [
+        "<rootDir>/tests/unit/**/*.test.ts",
+        "<rootDir>/tests/unit/**/*.test.tsx",
+      ],
       setupFilesAfterEnv: ["<rootDir>/tests/setup/jest.setup.ts"],
       moduleNameMapper: {
         "^@/(.*)$": "<rootDir>/src/$1",

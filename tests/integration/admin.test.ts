@@ -1,4 +1,10 @@
-import { createApplicationAction, createVacancyAction, registerApplicant, registerEmployer, updateApplicationStatus } from "@/shared/actions";
+import {
+  createApplicationAction,
+  createVacancyAction,
+  registerApplicant,
+  registerEmployer,
+  updateApplicationStatus,
+} from "@/shared/actions";
 import prisma from "@/shared/prisma";
 import { Role } from "@prisma/client";
 
@@ -21,8 +27,14 @@ async function seedPlatformData() {
     password: "secret321",
   });
 
-  const employer = await prisma.user.findUnique({ where: { email: "hr@digitallab.ru" }, include: { company: true } });
-  const applicant = await prisma.user.findUnique({ where: { email: "pavel@applicant.ru" }, include: { resume: true } });
+  const employer = await prisma.user.findUnique({
+    where: { email: "hr@digitallab.ru" },
+    include: { company: true },
+  });
+  const applicant = await prisma.user.findUnique({
+    where: { email: "pavel@applicant.ru" },
+    include: { resume: true },
+  });
 
   if (!employer?.company || !applicant?.resume) {
     throw new Error("Failed to prepare base data");
@@ -41,11 +53,21 @@ async function seedPlatformData() {
     salaryTo: 260000,
   });
 
-  const vacancy = await prisma.vacancy.findFirst({ where: { employerId: employer.id } });
-  await createApplicationAction({ applicantId: applicant.id, vacancyId: vacancy!.id });
+  const vacancy = await prisma.vacancy.findFirst({
+    where: { employerId: employer.id },
+  });
+  await createApplicationAction({
+    applicantId: applicant.id,
+    vacancyId: vacancy!.id,
+  });
 
-  const application = await prisma.application.findFirst({ where: { applicantId: applicant.id } });
-  await updateApplicationStatus({ applicationId: application!.id, status: "hired" });
+  const application = await prisma.application.findFirst({
+    where: { applicantId: applicant.id },
+  });
+  await updateApplicationStatus({
+    applicationId: application!.id,
+    status: "hired",
+  });
 }
 
 describe("Admin analytics", () => {
@@ -63,22 +85,39 @@ describe("Admin analytics", () => {
     await seedPlatformData();
 
     const userCount = await prisma.user.count();
-    const applicants = await prisma.user.count({ where: { role: Role.APPLICANT } });
-    const employers = await prisma.user.count({ where: { role: Role.EMPLOYER } });
-    const activeVacancies = await prisma.vacancy.count({ where: { isActive: true } });
-    const hiredCount = await prisma.application.count({ where: { status: "hired" } });
-    const logs = await prisma.systemLog.findMany({ orderBy: { createdAt: "desc" }, take: 5 });
+    const applicants = await prisma.user.count({
+      where: { role: Role.APPLICANT },
+    });
+    const employers = await prisma.user.count({
+      where: { role: Role.EMPLOYER },
+    });
+    const activeVacancies = await prisma.vacancy.count({
+      where: { isActive: true },
+    });
+    const hiredCount = await prisma.application.count({
+      where: { status: "hired" },
+    });
+    const logs = await prisma.systemLog.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    });
 
     expect(userCount).toBeGreaterThanOrEqual(3);
     expect(applicants).toBeGreaterThanOrEqual(1);
     expect(employers).toBeGreaterThanOrEqual(1);
     expect(activeVacancies).toBe(1);
     expect(hiredCount).toBe(1);
-    expect(logs.some((log) => log.action.includes("Создана вакансия"))).toBe(true);
-    expect(logs.some((log) => log.action.includes("Статус отклика"))).toBe(true);
+    expect(logs.some((log) => log.action.includes("Создана вакансия"))).toBe(
+      true,
+    );
+    expect(logs.some((log) => log.action.includes("Статус отклика"))).toBe(
+      true,
+    );
 
     // Ensure admin record still present and unaffected by operations
-    const storedAdmin = await prisma.user.findUnique({ where: { email: admin.email } });
+    const storedAdmin = await prisma.user.findUnique({
+      where: { email: admin.email },
+    });
     expect(storedAdmin?.role).toBe(Role.ADMIN);
   });
 });

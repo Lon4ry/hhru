@@ -20,7 +20,10 @@ type FormValues = z.infer<typeof schema>;
 export default function LoginPage() {
   const params = useSearchParams();
   const [error, setError] = useState<string | null>(null);
-  const form = useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: { email: "", password: "" } });
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { email: "", password: "" },
+  });
 
   const registered = params.get("registered");
 
@@ -41,9 +44,12 @@ export default function LoginPage() {
     <div className="mx-auto max-w-lg">
       <Card className="space-y-6">
         <div className="space-y-2 text-center">
-          <h2 className="text-2xl font-semibold text-slate-900">Вход в систему</h2>
+          <h2 className="text-2xl font-semibold text-slate-900">
+            Вход в систему
+          </h2>
           <p className="text-sm text-slate-500">
-            Авторизуйтесь, чтобы управлять вакансиями, откликами и статистикой на платформе «СтаффТехнолоджи».
+            Авторизуйтесь, чтобы управлять вакансиями, откликами и статистикой
+            на платформе «СтаффТехнолоджи».
           </p>
         </div>
         {registered === "applicant" && (
@@ -68,16 +74,32 @@ export default function LoginPage() {
             {...form.register("password")}
             error={form.formState.errors.password?.message}
           />
-          <Button type="submit" className="w-full" loading={form.formState.isSubmitting}>
+          <Button
+            type="submit"
+            className="w-full"
+            loading={form.formState.isSubmitting}
+          >
             Войти
           </Button>
         </form>
         <div className="space-y-2 text-center text-sm text-slate-500">
           <p>
-            Нет аккаунта? <Link className="text-slate-900 underline" href="/auth/register/applicant">Регистрация соискателя</Link>
+            Нет аккаунта?{" "}
+            <Link
+              className="text-slate-900 underline"
+              href="/auth/register/applicant"
+            >
+              Регистрация соискателя
+            </Link>
           </p>
           <p>
-            Представляете компанию? <Link className="text-slate-900 underline" href="/auth/register/employer">Регистрация работодателя</Link>
+            Представляете компанию?{" "}
+            <Link
+              className="text-slate-900 underline"
+              href="/auth/register/employer"
+            >
+              Регистрация работодателя
+            </Link>
           </p>
         </div>
       </Card>

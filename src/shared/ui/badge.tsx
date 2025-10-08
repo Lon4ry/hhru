@@ -9,6 +9,21 @@ const variantMap = {
 
 type BadgeVariant = keyof typeof variantMap;
 
-export function Badge({ children, variant = "neutral" }: { children: React.ReactNode; variant?: BadgeVariant }) {
-  return <span className={cn("inline-flex items-center rounded-full px-3 py-1 text-xs font-medium", variantMap[variant])}>{children}</span>;
+export function Badge({
+  children,
+  variant = "neutral",
+}: {
+  children: React.ReactNode;
+  variant?: BadgeVariant;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium",
+        variantMap[variant],
+      )}
+    >
+      {children}
+    </span>
+  );
 }

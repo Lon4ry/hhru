@@ -21,7 +21,9 @@ const vacancySchema = z.object({
 
 export async function createVacancyAction(data: unknown) {
   const parsed = vacancySchema.parse(data);
-  const employmentType = parsed.employmentType ? (parsed.employmentType as never) : undefined;
+  const employmentType = parsed.employmentType
+    ? (parsed.employmentType as never)
+    : undefined;
   const schedule = parsed.schedule ? (parsed.schedule as never) : undefined;
   const vacancy = await prisma.vacancy.create({
     data: {
@@ -36,12 +38,17 @@ export async function createVacancyAction(data: unknown) {
       salaryTo: parsed.salaryTo,
       employerId: parsed.employerId,
       companyId: (
-        await prisma.company.findFirst({ where: { userId: parsed.employerId }, select: { id: true } })
+        await prisma.company.findFirst({
+          where: { userId: parsed.employerId },
+          select: { id: true },
+        })
       )?.id,
     },
   });
 
-  const employer = await prisma.user.findUnique({ where: { id: parsed.employerId } });
+  const employer = await prisma.user.findUnique({
+    where: { id: parsed.employerId },
+  });
   await prisma.systemLog.create({
     data: {
       action: `Создана вакансия ${vacancy.title}`,

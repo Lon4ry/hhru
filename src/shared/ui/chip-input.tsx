@@ -12,7 +12,13 @@ interface ChipInputProps {
   error?: string;
 }
 
-export function ChipInput({ value, onChange, label, placeholder, error }: ChipInputProps) {
+export function ChipInput({
+  value,
+  onChange,
+  label,
+  placeholder,
+  error,
+}: ChipInputProps) {
   const [inputValue, setInputValue] = React.useState("");
   const inputId = React.useId();
 
@@ -52,7 +58,11 @@ export function ChipInput({ value, onChange, label, placeholder, error }: ChipIn
             className="flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700"
           >
             {chip}
-            <button type="button" className="text-slate-500" onClick={() => removeChip(chip)}>
+            <button
+              type="button"
+              className="text-slate-500"
+              onClick={() => removeChip(chip)}
+            >
               ×
             </button>
           </span>

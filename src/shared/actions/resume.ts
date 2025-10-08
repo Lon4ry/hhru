@@ -9,8 +9,16 @@ const educationSchema = z.object({
   institution: z.string().min(2, "Укажите учебное заведение"),
   degree: z.string().optional(),
   field: z.string().optional(),
-  startYear: z.coerce.number().min(1900).max(new Date().getFullYear()).optional(),
-  endYear: z.coerce.number().min(1900).max(new Date().getFullYear() + 1).optional(),
+  startYear: z.coerce
+    .number()
+    .min(1900)
+    .max(new Date().getFullYear())
+    .optional(),
+  endYear: z.coerce
+    .number()
+    .min(1900)
+    .max(new Date().getFullYear() + 1)
+    .optional(),
 });
 
 const experienceSchema = z.object({

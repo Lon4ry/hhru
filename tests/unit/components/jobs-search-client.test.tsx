@@ -20,7 +20,7 @@ describe("JobsSearchClient", () => {
     id: 1,
     title: "Senior React Developer",
     specialization: "Frontend",
-    description: "Работа над интерфейсом", 
+    description: "Работа над интерфейсом",
     requirements: "React, TypeScript",
     conditions: "Удалённая работа",
     city: "Москва",
@@ -33,7 +33,15 @@ describe("JobsSearchClient", () => {
     updatedAt: new Date("2024-01-11"),
     employerId: 10,
     companyId: 5,
-    company: { id: 5, name: "TechCorp", inn: "123", email: "corp@tech", phone: "+7", description: "", userId: 0 },
+    company: {
+      id: 5,
+      name: "TechCorp",
+      inn: "123",
+      email: "corp@tech",
+      phone: "+7",
+      description: "",
+      userId: 0,
+    },
     applications: [],
   } as const;
 
@@ -61,7 +69,9 @@ describe("JobsSearchClient", () => {
       />,
     );
 
-    expect(screen.getByRole("heading", { name: "Поиск вакансий" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Поиск вакансий" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Senior React Developer")).toBeInTheDocument();
     expect(screen.getByText(/TechCorp/)).toBeInTheDocument();
     const salaryLine = screen.getByText(
@@ -89,7 +99,10 @@ describe("JobsSearchClient", () => {
     const button = screen.getByRole("button", { name: "Откликнуться" });
     await user.click(button);
 
-    expect(createApplicationAction).toHaveBeenCalledWith({ applicantId: 321, vacancyId: baseVacancy.id });
+    expect(createApplicationAction).toHaveBeenCalledWith({
+      applicantId: 321,
+      vacancyId: baseVacancy.id,
+    });
   });
 
   it("prevents applying when user is anonymous", async () => {
@@ -104,7 +117,9 @@ describe("JobsSearchClient", () => {
       />,
     );
 
-    const button = screen.getByRole("button", { name: "Войдите как соискатель" });
+    const button = screen.getByRole("button", {
+      name: "Войдите как соискатель",
+    });
     await user.click(button);
 
     expect(createApplicationAction).not.toHaveBeenCalled();
@@ -128,13 +143,17 @@ describe("JobsSearchClient", () => {
     const citySelect = screen.getAllByLabelText("Город")[0];
     await user.selectOptions(citySelect, "Казань");
 
-    expect(push).toHaveBeenCalledWith(expect.stringContaining("city=%D0%9A%D0%B0%D0%B7%D0%B0%D0%BD%D1%8C"));
+    expect(push).toHaveBeenCalledWith(
+      expect.stringContaining("city=%D0%9A%D0%B0%D0%B7%D0%B0%D0%BD%D1%8C"),
+    );
 
     const salaryInput = screen.getByLabelText("Зарплата от");
     await user.clear(salaryInput);
     await user.type(salaryInput, "180000");
     await user.tab();
 
-    expect(push).toHaveBeenLastCalledWith(expect.stringContaining("salaryFrom=180000"));
+    expect(push).toHaveBeenLastCalledWith(
+      expect.stringContaining("salaryFrom=180000"),
+    );
   });
 });

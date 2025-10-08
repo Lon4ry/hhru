@@ -16,7 +16,10 @@ export async function createApplicationAction(data: unknown) {
   const resumeId = parsed.resumeId
     ? parsed.resumeId
     : (
-        await prisma.resume.findUnique({ where: { userId: parsed.applicantId }, select: { id: true } })
+        await prisma.resume.findUnique({
+          where: { userId: parsed.applicantId },
+          select: { id: true },
+        })
       )?.id;
   if (!resumeId) {
     throw new Error("Резюме не найдено");
@@ -29,7 +32,9 @@ export async function createApplicationAction(data: unknown) {
     },
   });
 
-  const applicant = await prisma.user.findUnique({ where: { id: parsed.applicantId } });
+  const applicant = await prisma.user.findUnique({
+    where: { id: parsed.applicantId },
+  });
   await prisma.systemLog.create({
     data: {
       action: "Создан отклик",
@@ -101,7 +106,10 @@ export async function inviteApplicantToInterview(data: unknown) {
     throw new Error("Сначала создайте активную вакансию");
   }
 
-  const resume = await prisma.resume.findUnique({ where: { id: parsed.resumeId }, select: { userId: true } });
+  const resume = await prisma.resume.findUnique({
+    where: { id: parsed.resumeId },
+    select: { userId: true },
+  });
   if (!resume) {
     throw new Error("Резюме не найдено");
   }

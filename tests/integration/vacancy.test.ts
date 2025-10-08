@@ -49,7 +49,9 @@ describe("Vacancy actions", () => {
       salaryTo: 240000,
     });
 
-    const log = await prisma.systemLog.findFirst({ where: { action: { contains: "Создана вакансия" } } });
+    const log = await prisma.systemLog.findFirst({
+      where: { action: { contains: "Создана вакансия" } },
+    });
     expect(log?.userEmail).toBe(employer.email);
 
     expect(redirect).toHaveBeenCalledWith("/employer/vacancies");
@@ -73,15 +75,17 @@ describe("Vacancy actions", () => {
           },
         },
         vacancies: {
-          create: [{
-            title: "Frontend Developer",
-            description: "Развитие фронтенда",
-            requirements: "React",
-            conditions: "Удаленно",
-            city: "Казань",
-            salaryFrom: 120000,
-            salaryTo: 150000,
-          }],
+          create: [
+            {
+              title: "Frontend Developer",
+              description: "Развитие фронтенда",
+              requirements: "React",
+              conditions: "Удаленно",
+              city: "Казань",
+              salaryFrom: 120000,
+              salaryTo: 150000,
+            },
+          ],
         },
       },
       include: { vacancies: true },
@@ -90,7 +94,9 @@ describe("Vacancy actions", () => {
     const vacancy = employer.vacancies[0];
     await toggleVacancyStatus(vacancy.id, false);
 
-    const updated = await prisma.vacancy.findUnique({ where: { id: vacancy.id } });
+    const updated = await prisma.vacancy.findUnique({
+      where: { id: vacancy.id },
+    });
     expect(updated?.isActive).toBe(false);
   });
 });

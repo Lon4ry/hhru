@@ -20,12 +20,14 @@ describe("Resume actions", () => {
             employmentType: "full_time",
             education: { create: [{ institution: "КФУ" }] },
             experience: {
-              create: [{
-                company: "StartUp",
-                position: "Intern",
-                startDate: new Date("2023-01-01"),
-                endDate: new Date("2023-06-01"),
-              }],
+              create: [
+                {
+                  company: "StartUp",
+                  position: "Intern",
+                  startDate: new Date("2023-01-01"),
+                  endDate: new Date("2023-06-01"),
+                },
+              ],
             },
             skills: { create: [{ skill: "Manual QA" }] },
           },
@@ -75,11 +77,19 @@ describe("Resume actions", () => {
       expectedSalary: 200000,
     });
     expect(updated?.education).toHaveLength(1);
-    expect(updated?.education?.[0]).toMatchObject({ institution: "МГУ", degree: "Магистр" });
+    expect(updated?.education?.[0]).toMatchObject({
+      institution: "МГУ",
+      degree: "Магистр",
+    });
     expect(updated?.experience).toHaveLength(1);
-    expect(updated?.experience?.[0]).toMatchObject({ company: "Enterprise", position: "QA Lead" });
+    expect(updated?.experience?.[0]).toMatchObject({
+      company: "Enterprise",
+      position: "QA Lead",
+    });
 
-    const log = await prisma.systemLog.findFirst({ where: { action: "Обновлено резюме", userEmail: applicant.email } });
+    const log = await prisma.systemLog.findFirst({
+      where: { action: "Обновлено резюме", userEmail: applicant.email },
+    });
     expect(log).not.toBeNull();
 
     expect(revalidatePath).toHaveBeenCalledWith("/applicant/dashboard");
