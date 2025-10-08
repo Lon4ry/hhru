@@ -64,6 +64,11 @@ export default async function JobsSearchPage({
 
   const applicantId =
     session?.user?.role === "APPLICANT" ? Number(session.user.id) : null;
+  const myApplications =
+    session?.user?.id &&
+    (await prisma.application.findMany({
+      where: { resume: { userId: Number(session?.user?.id) } },
+    }));
 
   return (
     <JobsSearchClient
@@ -75,6 +80,7 @@ export default async function JobsSearchPage({
           .filter(Boolean) as string[]
       }
       applicantId={applicantId}
+      applications={myApplications}
       initialFilters={{
         q,
         city,

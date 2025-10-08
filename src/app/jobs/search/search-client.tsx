@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import type { Vacancy, Company } from "@prisma/client";
+import type { Application, Company, Vacancy } from "@prisma/client";
 
 import { createApplicationAction } from "@/shared/actions";
 import {
@@ -30,6 +30,7 @@ interface JobsSearchClientProps {
     schedule: string;
     salaryFrom: string;
   };
+  applications: Application[];
 }
 
 const employmentOptions = [
@@ -56,6 +57,7 @@ export function JobsSearchClient({
   specializations,
   applicantId,
   initialFilters,
+  applications,
 }: JobsSearchClientProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -213,12 +215,19 @@ export function JobsSearchClient({
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <Button
-                    disabled={!applicantId}
+                    disabled={
+                      !applicantId ||
+                      applications.find((a) => a.vacancyId === vacancy.id)
+                    }
                     loading={isPending}
                     onClick={() => handleApply(vacancy.id)}
                     className="md:w-auto"
                   >
-                    {applicantId ? "Откликнуться" : "Войдите как соискатель"}
+                    {applicantId
+                      ? applications.find((a) => a.vacancyId === vacancy.id)
+                        ? "Вы уже откликнулись"
+                        : "Откликнуться"
+                      : "Войдите как соискатель"}
                   </Button>
                   {isPending && <Skeleton className="h-2 w-32" />}
                 </div>

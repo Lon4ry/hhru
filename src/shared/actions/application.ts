@@ -24,6 +24,18 @@ export async function createApplicationAction(data: unknown) {
   if (!resumeId) {
     throw new Error("Резюме не найдено");
   }
+
+  const existingApplication = await prisma.application.findFirst({
+    where: {
+      vacancyId: parsed.vacancyId,
+      resumeId,
+    },
+  });
+
+  if (existingApplication) {
+    throw new Error("Отклик на эту вакансию уже существует");
+  }
+
   await prisma.application.create({
     data: {
       applicantId: parsed.applicantId,
@@ -56,7 +68,7 @@ export async function updateApplicationStatus(data: unknown) {
   const application = await prisma.application.update({
     where: { id: parsed.applicationId },
     data: { status: parsed.status as never },
-    include: { applicant: true },
+    include: { applicant: true, vacancy: true },
   });
 
   await prisma.notification.create({
@@ -76,6 +88,7 @@ export async function updateApplicationStatus(data: unknown) {
 
   revalidatePath("/employer/dashboard");
   revalidatePath("/admin/dashboard");
+  revalidatePath("/applicant/dashboard");
 }
 
 function statusTitle(status: string) {
@@ -114,15 +127,29 @@ export async function inviteApplicantToInterview(data: unknown) {
     throw new Error("Резюме не найдено");
   }
 
-  const application = await prisma.application.create({
-    data: {
-      applicantId: resume.userId,
+  const existingApplication = await prisma.application.findFirst({
+    where: {
       vacancyId: vacancy.id,
       resumeId: parsed.resumeId,
-      status: "invited",
     },
     include: { applicant: true },
   });
+
+  const application = existingApplication
+    ? await prisma.application.update({
+        where: { id: existingApplication.id },
+        data: { status: "invited" },
+        include: { applicant: true },
+      })
+    : await prisma.application.create({
+        data: {
+          applicantId: resume.userId,
+          vacancyId: vacancy.id,
+          resumeId: parsed.resumeId,
+          status: "invited",
+        },
+        include: { applicant: true },
+      });
 
   await prisma.notification.create({
     data: {
@@ -139,5 +166,65 @@ export async function inviteApplicantToInterview(data: unknown) {
     },
   });
 
+  revalidatePath("/employer/dashboard");
+}
+
+const inviteResponseSchema = z.object({
+  applicationId: z.number(),
+  applicantId: z.number(),
+  decision: z.enum(["accept", "decline"]),
+});
+
+export async function respondToInterviewInvitation(data: unknown) {
+  const parsed = inviteResponseSchema.parse(data);
+  const application = await prisma.application.findUnique({
+    where: { id: parsed.applicationId },
+    include: {
+      applicant: true,
+      vacancy: true,
+    },
+  });
+
+  if (!application || application.applicantId !== parsed.applicantId) {
+    throw new Error("Отклик не найден");
+  }
+
+  if (application.status !== "invited") {
+    throw new Error("Нельзя ответить на приглашение для данного статуса");
+  }
+
+  const nextStatus = parsed.decision === "accept" ? "hired" : "rejected";
+
+  await prisma.application.update({
+    where: { id: parsed.applicationId },
+    data: { status: nextStatus as never },
+  });
+
+  if (application.vacancy?.employerId) {
+    await prisma.notification.create({
+      data: {
+        userId: application.vacancy.employerId,
+        title:
+          parsed.decision === "accept"
+            ? "Кандидат принял приглашение"
+            : "Кандидат отказался от приглашения",
+        message: `Соискатель ${application.applicant.lastName} ${application.applicant.firstName} ${
+          parsed.decision === "accept" ? "принял" : "отклонил"
+        } приглашение по вакансии «${application.vacancy.title}».`,
+      },
+    });
+  }
+
+  await prisma.systemLog.create({
+    data: {
+      action:
+        parsed.decision === "accept"
+          ? "Приглашение принято кандидатом"
+          : "Приглашение отклонено кандидатом",
+      userEmail: application.applicant.email,
+    },
+  });
+
+  revalidatePath("/applicant/dashboard");
   revalidatePath("/employer/dashboard");
 }
