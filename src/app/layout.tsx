@@ -8,6 +8,7 @@ import { Role } from "@prisma/client";
 
 import { Providers } from "./providers";
 import { getServerAuthSession } from "@/shared/auth/session";
+import { Logout } from "@/app/Logout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -89,6 +90,7 @@ export default async function RootLayout({
                   >
                     {dashboardLink?.label ?? "Войти"}
                   </Link>
+                  {session?.user && <Logout />}
                 </nav>
               </div>
             </header>

@@ -5,6 +5,7 @@ import Credentials from "next-auth/providers/credentials";
 import prisma from "@/shared/prisma";
 
 export const authOptions: NextAuthOptions = {
+  secret: "secret",
   session: {
     strategy: "jwt",
   },
