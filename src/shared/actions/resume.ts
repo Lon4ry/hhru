@@ -99,4 +99,5 @@ export async function saveResumeAction(data: unknown) {
 
   revalidatePath("/applicant/dashboard");
   revalidatePath("/applicant/resume/edit");
+  revalidatePath("/resumes/search");
 }

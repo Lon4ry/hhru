@@ -58,10 +58,12 @@ export async function createVacancyAction(data: unknown) {
 
   revalidatePath("/employer/dashboard");
   revalidatePath("/employer/vacancies");
+  revalidatePath("/jobs/search");
   redirect("/employer/vacancies");
 }
 
 export async function toggleVacancyStatus(id: number, isActive: boolean) {
   await prisma.vacancy.update({ where: { id }, data: { isActive } });
   revalidatePath("/employer/vacancies");
+  revalidatePath("/jobs/search");
 }

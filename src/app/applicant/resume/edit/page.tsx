@@ -10,16 +10,31 @@ export default async function ResumeEditPage() {
   if (!session?.user?.id) {
     redirect("/auth/login");
   }
-  const resume = await prisma.resume.findUnique({
-    where: { userId: Number(session.user.id) },
+
+  const userId = Number(session.user.id);
+  let resume = await prisma.resume.findUnique({
+    where: { userId },
     include: {
       education: true,
       experience: true,
+      skills: true,
     },
   });
 
   if (!resume) {
-    redirect("/applicant/dashboard");
+    resume = await prisma.resume.create({
+      data: {
+        userId,
+        desiredPosition: "Специалист",
+        city: "",
+        summary: "",
+      },
+      include: {
+        education: true,
+        experience: true,
+        skills: true,
+      },
+    });
   }
 
   return <ResumeEditor resume={resume} />;
