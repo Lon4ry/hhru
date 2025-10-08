@@ -20,6 +20,7 @@ async function getEmployerData(userId: number) {
       include: {
         applicant: true,
         vacancy: true,
+        resume: true,
       },
       orderBy: { createdAt: "desc" },
       take: 8,
@@ -135,7 +136,7 @@ export default async function EmployerDashboardPage() {
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-slate-900">
-                      {application.vacancy.title}
+                      {application.resume?.desiredPosition}
                     </h3>
                     <p className="text-sm text-slate-500">
                       {application.applicant.lastName}{" "}
