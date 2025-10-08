@@ -5,6 +5,8 @@ import prisma from "@/shared/prisma";
 import { Badge, Card, EmptyState, StatsCard } from "@/shared/ui";
 import { formatCurrency, formatDate } from "@/shared/lib/utils";
 
+import { ApplicationResponseButtons } from "./application-response-buttons";
+
 async function getApplicantData(userId: number) {
   const [applications, notifications] = await Promise.all([
     prisma.application.findMany({
@@ -156,7 +158,7 @@ export default async function ApplicantDashboardPage() {
                 key={application.id}
                 className="rounded-2xl border border-slate-200 p-4"
               >
-                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-slate-900">
                       {application.vacancy.title}
@@ -170,18 +172,26 @@ export default async function ApplicantDashboardPage() {
                       {formatCurrency(application.vacancy.salaryTo)}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      variant={
-                        statusLabels[application.status]?.variant ?? "neutral"
-                      }
-                    >
-                      {statusLabels[application.status]?.title ??
-                        application.status}
-                    </Badge>
-                    <span className="text-xs text-slate-400">
-                      {formatDate(application.createdAt)}
-                    </span>
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant={
+                          statusLabels[application.status]?.variant ?? "neutral"
+                        }
+                      >
+                        {statusLabels[application.status]?.title ??
+                          application.status}
+                      </Badge>
+                      <span className="text-xs text-slate-400">
+                        {formatDate(application.createdAt)}
+                      </span>
+                    </div>
+                    {application.status === "invited" && (
+                      <ApplicationResponseButtons
+                        applicationId={application.id}
+                        applicantId={userId}
+                      />
+                    )}
                   </div>
                 </div>
               </div>

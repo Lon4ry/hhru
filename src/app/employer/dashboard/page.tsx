@@ -5,6 +5,8 @@ import prisma from "@/shared/prisma";
 import { Badge, Card, EmptyState, StatsCard } from "@/shared/ui";
 import { formatCurrency, formatDate } from "@/shared/lib/utils";
 
+import { ApplicationStatusControls } from "./application-status-controls";
+
 async function getEmployerData(userId: number) {
   const [vacancies, applications, notifications] = await Promise.all([
     prisma.vacancy.findMany({
@@ -130,7 +132,7 @@ export default async function EmployerDashboardPage() {
                 key={application.id}
                 className="rounded-2xl border border-slate-200 p-4"
               >
-                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-slate-900">
                       {application.vacancy.title}
@@ -143,23 +145,31 @@ export default async function EmployerDashboardPage() {
                       {formatDate(application.createdAt)}
                     </p>
                   </div>
-                  <Badge
-                    variant={
-                      application.status === "invited"
-                        ? "success"
-                        : application.status === "rejected"
-                          ? "danger"
-                          : "neutral"
-                    }
-                  >
-                    {application.status === "pending"
-                      ? "На рассмотрении"
-                      : application.status === "invited"
-                        ? "Приглашён"
-                        : application.status === "rejected"
-                          ? "Отказ"
-                          : "Трудоустроен"}
-                  </Badge>
+                  <div className="flex flex-col items-end gap-2">
+                    <Badge
+                      variant={
+                        application.status === "invited"
+                          ? "success"
+                          : application.status === "rejected"
+                            ? "danger"
+                            : application.status === "hired"
+                              ? "success"
+                              : "neutral"
+                      }
+                    >
+                      {application.status === "pending"
+                        ? "На рассмотрении"
+                        : application.status === "invited"
+                          ? "Приглашён"
+                          : application.status === "rejected"
+                            ? "Отказ"
+                            : "Трудоустроен"}
+                    </Badge>
+                    <ApplicationStatusControls
+                      applicationId={application.id}
+                      currentStatus={application.status}
+                    />
+                  </div>
                 </div>
               </div>
             ))}
