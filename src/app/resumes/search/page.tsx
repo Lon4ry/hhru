@@ -27,15 +27,13 @@ export default async function ResumesSearchPage({
         q
           ? {
               OR: [
-                { desiredPosition: { contains: q, mode: "insensitive" } },
-                { summary: { contains: q, mode: "insensitive" } },
-                { skills: { has: q } },
+                { desiredPosition: { contains: q } },
+                { summary: { contains: q } },
+                { skills: { some: { skill: { contains: q } } } },
               ],
             }
           : {},
-        profession
-          ? { desiredPosition: { contains: profession, mode: "insensitive" } }
-          : {},
+        profession ? { desiredPosition: { contains: profession } } : {},
       ],
     },
     include: {

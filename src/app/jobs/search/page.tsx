@@ -27,9 +27,9 @@ export default async function JobsSearchPage({
       q
         ? {
             OR: [
-              { title: { contains: q, mode: "insensitive" } },
-              { description: { contains: q, mode: "insensitive" } },
-              { requirements: { contains: q, mode: "insensitive" } },
+              { title: { contains: q } },
+              { description: { contains: q } },
+              { requirements: { contains: q } },
             ],
           }
         : {},
