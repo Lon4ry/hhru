@@ -4,7 +4,11 @@ import Link from "next/link";
 
 import "./globals.css";
 
+import { Role } from "@prisma/client";
+
 import { Providers } from "./providers";
+import { getServerAuthSession } from "@/shared/auth/session";
+import { Logout } from "@/app/Logout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,11 +31,37 @@ const links = [
   { href: "/resumes/search", label: "Резюме" },
 ];
 
-export default function RootLayout({
+const roleLinks: Record<Role, { href: string; label: string }> = {
+  APPLICANT: {
+    href: "/applicant/dashboard",
+    label: "Кабинет соискателя",
+  },
+  EMPLOYER: {
+    href: "/employer/dashboard",
+    label: "Кабинет работодателя",
+  },
+  ADMIN: {
+    href: "/admin/dashboard",
+    label: "Админ-панель",
+  },
+};
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let session: Awaited<ReturnType<typeof getServerAuthSession>> | null = null;
+
+  try {
+    session = await getServerAuthSession();
+  } catch (error) {
+    console.error("Failed to load auth session", error);
+    session = null;
+  }
+  const role = session?.user?.role;
+  const dashboardLink = role ? roleLinks[role] : null;
+
   return (
     <html lang="ru">
       <body
@@ -55,11 +85,12 @@ export default function RootLayout({
                     </Link>
                   ))}
                   <Link
-                    href="/auth/login"
+                    href={dashboardLink?.href ?? "/auth/login"}
                     className="rounded-full bg-slate-900 px-4 py-2 text-white transition hover:bg-slate-700"
                   >
-                    Войти
+                    {dashboardLink?.label ?? "Войти"}
                   </Link>
+                  {session?.user && <Logout />}
                 </nav>
               </div>
             </header>

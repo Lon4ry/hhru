@@ -1,9 +1,11 @@
 import type { NextAuthOptions } from "next-auth";
+import type { Role } from "@prisma/client";
 import Credentials from "next-auth/providers/credentials";
 
 import prisma from "@/shared/prisma";
 
 export const authOptions: NextAuthOptions = {
+  secret: "secret",
   session: {
     strategy: "jwt",
   },
@@ -54,14 +56,14 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as { role: string }).role;
+        token.role = (user as { role: Role | undefined }).role;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.sub ?? "";
-        session.user.role = token.role as string | undefined;
+        session.user.role = token.role;
       }
       return session;
     },
