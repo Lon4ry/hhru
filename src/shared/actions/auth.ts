@@ -1,6 +1,5 @@
 "use server";
 
-import { hash } from "bcryptjs";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -26,7 +25,7 @@ const employerSchema = z.object({
 
 export async function registerApplicant(formData: unknown) {
   const parsed = applicantSchema.parse(formData);
-  const password = await hash(parsed.password, 10);
+  const password = parsed.password;
   const user = await prisma.user.create({
     data: {
       email: parsed.email,
@@ -40,7 +39,6 @@ export async function registerApplicant(formData: unknown) {
         create: {
           desiredPosition: parsed.desiredPosition,
           city: "",
-          skills: [],
         },
       },
       notifications: {
@@ -64,7 +62,7 @@ export async function registerApplicant(formData: unknown) {
 
 export async function registerEmployer(formData: unknown) {
   const parsed = employerSchema.parse(formData);
-  const password = await hash(parsed.password, 10);
+  const password = parsed.password;
   const user = await prisma.user.create({
     data: {
       email: parsed.email,

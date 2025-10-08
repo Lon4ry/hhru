@@ -39,58 +39,65 @@ enum ScheduleType {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  email      String    @unique
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
   password   String
   firstName  String
   lastName   String
   patronymic String?
   phone      String?
-  role       Role      @default(APPLICANT)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  role       Role     @default(APPLICANT)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   resume        Resume?
   company       Company?
-  vacancies     Vacancy[]     @relation("EmployerVacancies")
-  applications  Application[] @relation("ApplicantApplications")
+  vacancies     Vacancy[]      @relation("EmployerVacancies")
+  applications  Application[]  @relation("ApplicantApplications")
   notifications Notification[]
 }
 
 model Company {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
   inn         String
   email       String
   phone       String?
   description String?
-  user        User     @relation(fields: [userId], references: [id])
-  userId      Int      @unique
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int       @unique
   vacancies   Vacancy[]
 }
 
 model Resume {
-  id             Int            @id @default(autoincrement())
-  user           User           @relation(fields: [userId], references: [id])
-  userId         Int            @unique
+  id              Int             @id @default(autoincrement())
+  user            User            @relation(fields: [userId], references: [id])
+  userId          Int             @unique
   desiredPosition String
-  summary        String?
-  city           String?
-  expectedSalary Int?
-  employmentType EmploymentType?
-  skills         String[]       @default([])
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  summary         String?
+  city            String?
+  expectedSalary  Int?
+  employmentType  EmploymentType?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
 
-  education  Education[]
-  experience Experience[]
+  education    Education[]
+  experience   Experience[]
   applications Application[]
+  skills       Skill[]
+}
+
+model Skill {
+  id       Int    @id @default(autoincrement())
+  skill    String
+  resumeId Int
+  resume   Resume @relation(fields: [resumeId], references: [id])
 }
 
 model Education {
-  id         Int     @id @default(autoincrement())
-  resume     Resume  @relation(fields: [resumeId], references: [id])
-  resumeId   Int
+  id          Int     @id @default(autoincrement())
+  resume      Resume  @relation(fields: [resumeId], references: [id])
+  resumeId    Int
   institution String
   degree      String?
   field       String?
@@ -99,8 +106,8 @@ model Education {
 }
 
 model Experience {
-  id          Int      @id @default(autoincrement())
-  resume      Resume   @relation(fields: [resumeId], references: [id])
+  id          Int       @id @default(autoincrement())
+  resume      Resume    @relation(fields: [resumeId], references: [id])
   resumeId    Int
   company     String
   position    String
@@ -110,22 +117,22 @@ model Experience {
 }
 
 model Vacancy {
-  id            Int       @id @default(autoincrement())
-  title         String
+  id             Int             @id @default(autoincrement())
+  title          String
   specialization String?
-  description   String
-  requirements  String
-  conditions    String
-  city          String
+  description    String
+  requirements   String
+  conditions     String
+  city           String
   employmentType EmploymentType?
-  schedule      ScheduleType?
-  salaryFrom    Int?
-  salaryTo      Int?
-  isActive      Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  schedule       ScheduleType?
+  salaryFrom     Int?
+  salaryTo       Int?
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
-  employer   User    @relation("EmployerVacancies", fields: [employerId], references: [id])
+  employer   User     @relation("EmployerVacancies", fields: [employerId], references: [id])
   employerId Int
   company    Company? @relation(fields: [companyId], references: [id])
   companyId  Int?
@@ -134,19 +141,19 @@ model Vacancy {
 }
 
 model Application {
-  id          Int               @id @default(autoincrement())
-  status      ApplicationStatus @default(pending)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  id        Int               @id @default(autoincrement())
+  status    ApplicationStatus @default(pending)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 
-  applicant   User    @relation("ApplicantApplications", fields: [applicantId], references: [id])
+  applicant   User @relation("ApplicantApplications", fields: [applicantId], references: [id])
   applicantId Int
 
-  vacancy     Vacancy @relation(fields: [vacancyId], references: [id])
-  vacancyId   Int
+  vacancy   Vacancy @relation(fields: [vacancyId], references: [id])
+  vacancyId Int
 
-  resume      Resume? @relation(fields: [resumeId], references: [id])
-  resumeId    Int?
+  resume   Resume? @relation(fields: [resumeId], references: [id])
+  resumeId Int?
 }
 
 model Notification {

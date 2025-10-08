@@ -37,6 +37,7 @@ export default async function ResumesSearchPage({ searchParams }: ResumesSearchP
       user: { select: { id: true, firstName: true, lastName: true, phone: true } },
       experience: true,
       education: true,
+      skills: true
     },
     orderBy: { updatedAt: "desc" },
     take: 30,

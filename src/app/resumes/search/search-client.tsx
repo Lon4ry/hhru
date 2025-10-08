@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import type { Resume, Experience, Education, User } from "@prisma/client";
+import type { Education, Experience, Resume, User } from "@prisma/client";
 
 import { inviteApplicantToInterview } from "@/shared/actions";
 import { Badge, Button, Card, ChipInput, EmptyState, FiltersSheet, Input, Skeleton } from "@/shared/ui";
@@ -12,6 +12,9 @@ interface ResumeWithRelations extends Resume {
   experience: Experience[];
   education: Education[];
   user: Pick<User, "id" | "firstName" | "lastName" | "phone">;
+  skills: {
+    skill: string;
+  }[]
 }
 
 interface ResumesSearchClientProps {
@@ -118,7 +121,7 @@ export function ResumesSearchClient({ resumes, employerId, initialFilters }: Res
                     <p className="text-sm text-slate-500">{formatCurrency(resume.expectedSalary)}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {resume.skills.slice(0, 6).map((skill) => (
+                    {resume.skills.slice(0, 6).map(({skill}) => (
                       <Badge key={skill} variant="neutral">
                         {skill}
                       </Badge>

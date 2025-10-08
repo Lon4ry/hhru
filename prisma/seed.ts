@@ -1,260 +1,281 @@
-import { PrismaClient, Role, EmploymentType, ScheduleType, ApplicationStatus } from "@prisma/client";
-import { hash } from "bcryptjs";
+import { ApplicationStatus, EmploymentType, PrismaClient, Role, ScheduleType } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const employersNames = ["ТехноСофт", "Диджитал Вектор", "Инновации Плюс", "Городские Решения", "Стафф Хаб"];
-const jobTitles = [
-  "Разработчик",
-  "Бизнес-аналитик",
-  "Продуктовый менеджер",
-  "UX/UI дизайнер",
-  "Data Scientist",
-  "DevOps инженер",
-  "QA инженер",
-  "Project Manager",
-];
-const cities = ["Москва", "Санкт-Петербург", "Екатеринбург", "Казань", "Новосибирск", "Самара", "Пермь"];
-const skillsPool = [
-  "TypeScript",
-  "React",
-  "Next.js",
-  "Node.js",
-  "SQL",
-  "Python",
-  "Figma",
-  "Scrum",
-  "1C",
-  "Docker",
-  "Kubernetes",
-  "Power BI",
-  "Product Discovery",
-];
-const conditionsPool = [
-  "ДМС с первого дня",
-  "Гибридный график",
-  "Оплата обучения",
-  "Корпоративные мероприятия",
-  "Современный офис у метро",
-];
+async function main() {
+  console.log('🌱 Seeding database...');
 
-function pick<T>(items: T[]): T {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
-function pickMany<T>(items: T[], count: number): T[] {
-  const copy = [...items];
-  const result: T[] = [];
-  for (let i = 0; i < count; i += 1) {
-    if (copy.length === 0) break;
-    const index = Math.floor(Math.random() * copy.length);
-    result.push(copy.splice(index, 1)[0]);
-  }
-  return result;
-}
-
-async function createAdmin() {
-  const password = await hash("admin123", 10);
-  await prisma.user.create({
+  // --- Admin ---
+  const admin = await prisma.user.create({
     data: {
-      email: "admin@stafftech.ru",
-      password,
-      firstName: "Антон",
-      lastName: "Орлов",
+      email: 'admin@stafftech.ru',
+      password: 'admin123',
+      firstName: 'Администратор',
+      lastName: 'Системы',
       role: Role.ADMIN,
-      notifications: {
-        create: [{ title: "Добро пожаловать", message: "Вы вошли в панель администратора СтаффТехнолоджи." }],
+    },
+  });
+
+  // --- Employers & Companies ---
+  const employer1 = await prisma.user.create({
+    data: {
+      email: 'hr@techcorp.ru',
+      password: 'password123',
+      firstName: 'Анна',
+      lastName: 'Петрова',
+      role: Role.EMPLOYER,
+      phone: '+7 (999) 123-45-67',
+      company: {
+        create: {
+          name: 'TechCorp',
+          inn: '7701234567',
+          email: 'contact@techcorp.ru',
+          phone: '+7 (999) 111-22-33',
+          description: 'IT-компания, специализирующаяся на разработке корпоративных систем',
+        },
+      },
+    },
+    include: { company: true },
+  });
+
+  const employer2 = await prisma.user.create({
+    data: {
+      email: 'jobs@finlogic.ru',
+      password: 'password123',
+      firstName: 'Сергей',
+      lastName: 'Иванов',
+      role: Role.EMPLOYER,
+      company: {
+        create: {
+          name: 'FinLogic',
+          inn: '7723456789',
+          email: 'info@finlogic.ru',
+          phone: '+7 (999) 222-33-44',
+          description: 'Финансовые решения и консалтинг',
+        },
+      },
+    },
+    include: { company: true },
+  });
+
+  // --- Vacancies ---
+  const vacancy1 = await prisma.vacancy.create({
+    data: {
+      title: 'Frontend Developer',
+      specialization: 'Web Development',
+      description: 'Разработка интерфейсов на React',
+      requirements: 'React, TypeScript, TailwindCSS',
+      conditions: 'Удалённо, график гибкий',
+      city: 'Москва',
+      employmentType: EmploymentType.full_time,
+      schedule: ScheduleType.remote,
+      salaryFrom: 120000,
+      salaryTo: 180000,
+      employerId: employer1.id,
+      companyId: employer1.company?.id,
+    },
+  });
+
+  const vacancy2 = await prisma.vacancy.create({
+    data: {
+      title: 'Data Analyst',
+      specialization: 'Analytics',
+      description: 'Работа с BI-инструментами и SQL',
+      requirements: 'SQL, PowerBI, Python',
+      conditions: 'Офис, гибкий график',
+      city: 'Санкт-Петербург',
+      employmentType: EmploymentType.full_time,
+      schedule: ScheduleType.hybrid,
+      salaryFrom: 90000,
+      salaryTo: 130000,
+      employerId: employer2.id,
+      companyId: employer2.company?.id,
+    },
+  });
+
+  // --- Applicants & Resumes ---
+  const applicant1 = await prisma.user.create({
+    data: {
+      email: 'alex@example.com',
+      password: 'test123',
+      firstName: 'Алексей',
+      lastName: 'Николаев',
+      patronymic: 'Игоревич',
+      role: Role.APPLICANT,
+      resume: {
+        create: {
+          desiredPosition: 'Frontend Developer',
+          summary: 'Опыт работы с React, Next.js, TailwindCSS',
+          city: 'Москва',
+          expectedSalary: 150000,
+          employmentType: EmploymentType.full_time,
+          education: {
+            create: [
+              {
+                institution: 'МГТУ им. Баумана',
+                degree: 'Бакалавр',
+                field: 'Информатика и вычислительная техника',
+                startYear: 2017,
+                endYear: 2021,
+              },
+            ],
+          },
+          experience: {
+            create: [
+              {
+                company: 'WebDev Studio',
+                position: 'Junior Frontend Developer',
+                description: 'Разработка SPA-приложений на React',
+                startDate: new Date('2021-07-01'),
+                endDate: new Date('2023-02-01'),
+              },
+            ],
+          },
+          Skill: {
+            create: [
+              { skill: 'React' },
+              { skill: 'TypeScript' },
+              { skill: 'TailwindCSS' },
+            ],
+          },
+        },
+      },
+    },
+    include: { resume: true },
+  });
+
+  const applicant2 = await prisma.user.create({
+    data: {
+      email: 'maria@example.com',
+      password: 'test123',
+      firstName: 'Мария',
+      lastName: 'Кузнецова',
+      role: Role.APPLICANT,
+      resume: {
+        create: {
+          desiredPosition: 'Data Analyst',
+          summary: 'Опыт анализа данных и визуализации',
+          city: 'Санкт-Петербург',
+          expectedSalary: 100000,
+          employmentType: EmploymentType.full_time,
+          education: {
+            create: [
+              {
+                institution: 'СПбГУ',
+                degree: 'Магистр',
+                field: 'Прикладная математика',
+                startYear: 2015,
+                endYear: 2021,
+              },
+            ],
+          },
+          experience: {
+            create: [
+              {
+                company: 'FinData',
+                position: 'Data Analyst',
+                description: 'Построение отчётов и визуализаций',
+                startDate: new Date('2021-01-01'),
+                endDate: new Date('2023-01-01'),
+              },
+            ],
+          },
+          Skill: {
+            create: [
+              { skill: 'SQL' },
+              { skill: 'PowerBI' },
+              { skill: 'Python' },
+            ],
+          },
+        },
+      },
+    },
+    include: { resume: true },
+  });
+
+  const applicant3 = await prisma.user.create({
+    data: {
+      email: 'ivan@example.com',
+      password: 'test123',
+      firstName: 'Иван',
+      lastName: 'Соколов',
+      role: Role.APPLICANT,
+      resume: {
+        create: {
+          desiredPosition: 'Project Manager',
+          city: 'Москва',
+          expectedSalary: 180000,
+          employmentType: EmploymentType.full_time,
+          summary: 'Опыт управления IT-проектами более 5 лет',
+          education: {
+            create: [
+              {
+                institution: 'ВШЭ',
+                degree: 'Магистр менеджмента',
+                startYear: 2012,
+                endYear: 2018,
+              },
+            ],
+          },
+          Skill: {
+            create: [
+              { skill: 'Agile' },
+              { skill: 'Scrum' },
+              { skill: 'Kanban' },
+            ],
+          },
+        },
       },
     },
   });
-  await prisma.systemLog.create({ data: { action: "Создан администратор", userEmail: "admin@stafftech.ru" } });
-}
 
-async function createEmployers() {
-  const employers = [];
-  for (let i = 0; i < 2; i += 1) {
-    const name = employersNames[i % employersNames.length];
-    const email = `employer${i + 1}@stafftech.ru`;
-    const password = await hash("employer123", 10);
-    const employer = await prisma.user.create({
-      data: {
-        email,
-        password,
-        firstName: name,
-        lastName: "",
-        phone: `+7${Math.floor(1000000000 + Math.random() * 8999999999)}`,
-        role: Role.EMPLOYER,
-        notifications: {
-          create: [{ title: "Новый день, новые кандидаты", message: "Проверьте входящие отклики." }],
-        },
-        company: {
-          create: {
-            name,
-            inn: `${Math.floor(1000000000 + Math.random() * 8999999999)}`,
-            email,
-            phone: `+7${Math.floor(9000000000 + Math.random() * 999999999)}`,
-            description: "Компания открывает новые направления и расширяет команды.",
-          },
-        },
+  // --- Applications ---
+  await prisma.application.createMany({
+    data: [
+      {
+        applicantId: applicant1.id,
+        vacancyId: vacancy1.id,
+        resumeId: applicant1.resume?.id,
+        status: ApplicationStatus.pending,
       },
-      include: { company: true },
-    });
-    employers.push(employer);
-    await prisma.systemLog.create({ data: { action: `Регистрация работодателя ${name}`, userEmail: email } });
-  }
-  return employers;
-}
-
-async function createApplicants() {
-  const applicants = [];
-  const password = await hash("applicant123", 10);
-  for (let i = 0; i < 30; i += 1) {
-    const firstName = `Имя${i + 1}`;
-    const lastName = `Фамилия${i + 1}`;
-    const email = `applicant${i + 1}@stafftech.ru`;
-    const desiredPosition = pick(jobTitles);
-    const applicant = await prisma.user.create({
-      data: {
-        email,
-        password,
-        firstName,
-        lastName,
-        phone: `+7${Math.floor(9000000000 + Math.random() * 999999999)}`,
-        role: Role.APPLICANT,
-        notifications: {
-          create: [
-            { title: "Обновите резюме", message: "Добавьте свежие навыки, чтобы повысить интерес работодателей." },
-            { title: "Новые вакансии", message: "Каждый день появляются десятки актуальных предложений." },
-          ],
-        },
-        resume: {
-          create: {
-            desiredPosition,
-            city: pick(cities),
-            expectedSalary: Math.floor(60000 + Math.random() * 200000),
-            employmentType: pick(Object.values(EmploymentType)),
-            summary: "Профессионал, готовый к новым вызовам и развитию.",
-            skills: pickMany(skillsPool, 5),
-            education: {
-              create: [
-                {
-                  institution: "Национальный университет технологий",
-                  degree: "Бакалавр",
-                  field: "Информационные системы",
-                  startYear: 2010 + (i % 6),
-                  endYear: 2014 + (i % 6),
-                },
-              ],
-            },
-            experience: {
-              create: [
-                {
-                  company: "Tech Solutions",
-                  position: desiredPosition,
-                  description: "Работа над продуктом в кросс-функциональной команде.",
-                  startDate: new Date(2018, 0, 1),
-                  endDate: new Date(2021, 5, 1),
-                },
-                {
-                  company: "Innovate Labs",
-                  position: desiredPosition,
-                  description: "Ведение проектов и улучшение процессов разработки.",
-                  startDate: new Date(2021, 6, 1),
-                  endDate: null,
-                },
-              ],
-            },
-          },
-        },
+      {
+        applicantId: applicant2.id,
+        vacancyId: vacancy2.id,
+        resumeId: applicant2.resume?.id,
+        status: ApplicationStatus.invited,
       },
-      include: { resume: true },
-    });
-    applicants.push(applicant);
-  }
-  return applicants;
+      {
+        applicantId: applicant3.id,
+        vacancyId: vacancy2.id,
+        status: ApplicationStatus.rejected,
+      },
+    ],
+  });
+
+  // --- Notifications ---
+  await prisma.notification.createMany({
+    data: [
+      {
+        title: 'Новое приглашение на собеседование',
+        message: 'Работодатель FinLogic пригласил вас на интервью по вакансии Data Analyst.',
+        userId: applicant2.id,
+      },
+      {
+        title: 'Новый отклик на вакансию',
+        message: 'Поступил отклик от Алексея Николаева на вакансию Frontend Developer.',
+        userId: employer1.id,
+      },
+    ],
+  });
+
+  console.log('✅ Seeding completed successfully!');
 }
 
-async function createVacancies(employers: Awaited<ReturnType<typeof createEmployers>>) {
-  const vacancies = [];
-  const employmentTypes = Object.values(EmploymentType);
-  const schedules = Object.values(ScheduleType);
-  let created = 0;
-  for (const employer of employers) {
-    for (let i = 0; i < 10; i += 1) {
-      const title = pick(jobTitles);
-      const vacancy = await prisma.vacancy.create({
-        data: {
-          title: `${title} ${i + 1}`,
-          specialization: title,
-          description: "Работа с современными технологиями и драйвовой командой.",
-          requirements: "Опыт работы от 2 лет, уверенное владение инструментами из стека компании.",
-          conditions: pickMany(conditionsPool, 2).join(", "),
-          city: pick(cities),
-          salaryFrom: Math.floor(80000 + Math.random() * 70000),
-          salaryTo: Math.floor(150000 + Math.random() * 120000),
-          employmentType: pick(employmentTypes),
-          schedule: pick(schedules),
-          employerId: employer.id,
-          companyId: employer.company?.id,
-        },
-      });
-      vacancies.push(vacancy);
-      await prisma.systemLog.create({ data: { action: `Создана вакансия ${vacancy.title}`, userEmail: employer.email } });
-      created += 1;
-      if (created >= 20) return vacancies;
-    }
-  }
-  return vacancies;
-}
-
-async function createApplications(
-  applicants: Awaited<ReturnType<typeof createApplicants>>,
-  vacancies: Awaited<ReturnType<typeof createVacancies>>,
-) {
-  const statuses = Object.values(ApplicationStatus);
-  let created = 0;
-  for (const applicant of applicants) {
-    if (!applicant.resume) continue;
-    const sampleVacancies = pickMany(vacancies, 3);
-    for (const vacancy of sampleVacancies) {
-      await prisma.application.create({
-        data: {
-          applicantId: applicant.id,
-          vacancyId: vacancy.id,
-          resumeId: applicant.resume.id,
-          status: pick(statuses),
-        },
-      });
-      created += 1;
-      if (created >= 50) return;
-    }
-  }
-}
-
-async function seed() {
-  await prisma.notification.deleteMany();
-  await prisma.application.deleteMany();
-  await prisma.vacancy.deleteMany();
-  await prisma.resume.deleteMany();
-  await prisma.company.deleteMany();
-  await prisma.user.deleteMany();
-  await prisma.systemLog.deleteMany();
-
-  await createAdmin();
-  const employers = await createEmployers();
-  const applicants = await createApplicants();
-  const vacancies = await createVacancies(employers);
-  await createApplications(applicants, vacancies);
-
-  await prisma.systemLog.create({ data: { action: "Инициализация базы данных завершена" } });
-}
-
-seed()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (error) => {
-    console.error(error);
-    await prisma.$disconnect();
+main()
+  .catch((e) => {
+    console.error(e);
     process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
   });
