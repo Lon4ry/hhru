@@ -1,8 +1,9 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getServerAuthSession } from "@/shared/auth/session";
 import prisma from "@/shared/prisma";
-import { Badge, Card, EmptyState, StatsCard } from "@/shared/ui";
+import { Badge, Button, Card, EmptyState, StatsCard } from "@/shared/ui";
 import { formatCurrency, formatDate } from "@/shared/lib/utils";
 
 import { ApplicationStatusControls } from "./application-status-controls";
@@ -73,6 +74,28 @@ export default async function EmployerDashboardPage() {
           description="Поддерживайте коммуникацию"
         />
       </div>
+
+      <Card className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-2">
+          <h2 className="text-xl font-semibold text-slate-900">
+            Создание вакансий
+          </h2>
+          <p className="text-sm text-slate-500">
+            Публикуйте новые предложения, чтобы быстрее находить кандидатов.
+          </p>
+        </div>
+        <div className="flex flex-col items-end gap-2 text-sm">
+          <Button asChild size="lg">
+            <Link href="/employer/vacancies/new">Создать вакансию</Link>
+          </Button>
+          <Link
+            href="/employer/vacancies"
+            className="text-xs font-medium text-slate-500 transition hover:text-slate-700"
+          >
+            Перейти к списку
+          </Link>
+        </div>
+      </Card>
 
       <Card className="space-y-4">
         <div>

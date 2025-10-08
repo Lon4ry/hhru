@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import type { Education, Experience, Resume } from "@prisma/client";
+import type { Education, Experience, Resume, Skill } from "@prisma/client";
 
 import { saveResumeAction } from "@/shared/actions";
 import { Button, Card, ChipInput, Input, Select } from "@/shared/ui";
@@ -50,7 +50,7 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 interface ResumeEditorProps {
-  resume: Resume & { education: Education[]; experience: Experience[] };
+  resume: Resume & { education: Education[]; experience: Experience[]; skills: Skill[] };
 }
 
 export function ResumeEditor({ resume }: ResumeEditorProps) {
@@ -66,7 +66,9 @@ export function ResumeEditor({ resume }: ResumeEditorProps) {
         ? String(resume.expectedSalary)
         : "",
       employmentType: resume.employmentType ?? "",
-      skills: resume.skills.length ? resume.skills : ["Коммуникация"],
+      skills: resume.skills.length
+        ? resume.skills.map((item) => item.skill)
+        : ["Коммуникация"],
       education: resume.education.length
         ? resume.education.map((item) => ({
             institution: item.institution,

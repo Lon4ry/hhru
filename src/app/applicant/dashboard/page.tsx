@@ -1,14 +1,15 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getServerAuthSession } from "@/shared/auth/session";
 import prisma from "@/shared/prisma";
-import { Badge, Card, EmptyState, StatsCard } from "@/shared/ui";
+import { Badge, Button, Card, EmptyState, StatsCard } from "@/shared/ui";
 import { formatCurrency, formatDate } from "@/shared/lib/utils";
 
 import { ApplicationResponseButtons } from "./application-response-buttons";
 
 async function getApplicantData(userId: number) {
-  const [applications, notifications] = await Promise.all([
+  const [applications, notifications, resume] = await Promise.all([
     prisma.application.findMany({
       where: { applicantId: userId },
       include: {
@@ -26,12 +27,17 @@ async function getApplicantData(userId: number) {
       orderBy: { createdAt: "desc" },
       take: 6,
     }),
+    prisma.resume.findUnique({
+      where: { userId },
+      select: {
+        desiredPosition: true,
+        expectedSalary: true,
+        city: true,
+        employmentType: true,
+        updatedAt: true,
+      },
+    }),
   ]);
-
-  const resume = await prisma.resume.findUnique({
-    where: { userId },
-    select: { desiredPosition: true, expectedSalary: true },
-  });
 
   const statusMap = applications.reduce(
     (acc, application) => {
@@ -52,6 +58,14 @@ const statusLabels: Record<
   invited: { title: "Приглашение", variant: "success" },
   rejected: { title: "Отказ", variant: "danger" },
   hired: { title: "Предложение", variant: "success" },
+};
+
+const employmentTypeLabels: Record<string, string> = {
+  full_time: "Полная занятость",
+  part_time: "Частичная занятость",
+  project: "Проектная работа",
+  internship: "Стажировка",
+  temporary: "Временная занятость",
 };
 
 export default async function ApplicantDashboardPage() {
@@ -81,6 +95,36 @@ export default async function ApplicantDashboardPage() {
           description="Следите за статусом ваших заявок"
         />
       </div>
+
+      <Card className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-2">
+          <h2 className="text-xl font-semibold text-slate-900">Ваше резюме</h2>
+          <p className="text-sm text-slate-500">
+            Обновляйте информацию, чтобы работодатели видели актуальные данные.
+          </p>
+          <div className="grid gap-1 text-sm text-slate-600">
+            <span>Город: {resume?.city ?? "Не указан"}</span>
+            <span>
+              Формат занятости:{" "}
+              {resume?.employmentType
+                ? employmentTypeLabels[resume.employmentType] ?? resume.employmentType
+                : "Не указан"}
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          {resume?.updatedAt && (
+            <span className="text-xs text-slate-400">
+              Обновлено {formatDate(resume.updatedAt)}
+            </span>
+          )}
+          <Button asChild size="lg">
+            <Link href="/applicant/resume/edit">
+              {resume ? "Редактировать резюме" : "Создать резюме"}
+            </Link>
+          </Button>
+        </div>
+      </Card>
 
       <Card className="space-y-3">
         <h3 className="text-sm font-semibold text-slate-900">
