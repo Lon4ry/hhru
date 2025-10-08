@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import { JobsSearchClient } from "@/app/jobs/search/search-client";
 import { formatCurrency } from "@/shared/lib/utils";
 
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(() => ({ push: jest.fn() })),
+}));
+
 jest.mock("@/shared/actions", () => ({
   createApplicationAction: jest.fn().mockResolvedValue(undefined),
 }));
@@ -60,7 +64,13 @@ describe("JobsSearchClient", () => {
     expect(screen.getByRole("heading", { name: "Поиск вакансий" })).toBeInTheDocument();
     expect(screen.getByText("Senior React Developer")).toBeInTheDocument();
     expect(screen.getByText(/TechCorp/)).toBeInTheDocument();
-    expect(screen.getByText(`${formatCurrency(baseVacancy.salaryFrom)} — ${formatCurrency(baseVacancy.salaryTo)}`)).toBeInTheDocument();
+    const salaryLine = screen.getByText(
+      (_, element) =>
+        element?.textContent ===
+        `${formatCurrency(baseVacancy.salaryFrom)} — ${formatCurrency(baseVacancy.salaryTo)}`,
+      { selector: "p" },
+    );
+    expect(salaryLine).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Откликнуться" })).toBeEnabled();
   });
 

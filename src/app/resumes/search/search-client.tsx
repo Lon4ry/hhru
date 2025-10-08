@@ -55,10 +55,7 @@ export function ResumesSearchClient({ resumes, employerId, initialFilters }: Res
 
   const filterPanel = (
     <div className="grid gap-4">
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-800">Ключевые слова</label>
-        <ChipInput value={keywords} onChange={setKeywords} placeholder="Например, React, аналитика" />
-      </div>
+      <ChipInput label="Ключевые слова" value={keywords} onChange={setKeywords} placeholder="Например, React, аналитика" />
       <Input
         label="Профессия"
         placeholder="Например, Аналитик данных"

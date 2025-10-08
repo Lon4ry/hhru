@@ -14,6 +14,7 @@ interface ChipInputProps {
 
 export function ChipInput({ value, onChange, label, placeholder, error }: ChipInputProps) {
   const [inputValue, setInputValue] = React.useState("");
+  const inputId = React.useId();
 
   const addChip = () => {
     const trimmed = inputValue.trim();
@@ -29,7 +30,11 @@ export function ChipInput({ value, onChange, label, placeholder, error }: ChipIn
 
   return (
     <div className="flex flex-col gap-2 text-sm text-slate-700">
-      {label && <span className="font-medium text-slate-800">{label}</span>}
+      {label && (
+        <label className="font-medium text-slate-800" htmlFor={inputId}>
+          {label}
+        </label>
+      )}
       <div
         className={cn(
           "flex min-h-12 flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2",
@@ -37,7 +42,9 @@ export function ChipInput({ value, onChange, label, placeholder, error }: ChipIn
         )}
       >
         {value.length === 0 && !inputValue && (
-          <span className="text-xs text-slate-400">{placeholder ?? "Введите и нажмите Enter"}</span>
+          <span aria-hidden className="text-xs text-slate-400">
+            {placeholder ?? "Введите и нажмите Enter"}
+          </span>
         )}
         {value.map((chip) => (
           <span
@@ -51,6 +58,9 @@ export function ChipInput({ value, onChange, label, placeholder, error }: ChipIn
           </span>
         ))}
         <input
+          id={inputId}
+          placeholder={placeholder ?? "Введите и нажмите Enter"}
+          aria-describedby={error ? `${inputId}-error` : undefined}
           className="flex-1 border-none bg-transparent text-sm text-slate-900 focus:outline-none"
           value={inputValue}
           onChange={(event) => setInputValue(event.target.value)}
@@ -72,7 +82,11 @@ export function ChipInput({ value, onChange, label, placeholder, error }: ChipIn
           Добавить
         </button>
       </div>
-      {error && <span className="text-xs text-red-500">{error}</span>}
+      {error && (
+        <span id={`${inputId}-error`} className="text-xs text-red-500">
+          {error}
+        </span>
+      )}
     </div>
   );
 }

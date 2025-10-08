@@ -2,7 +2,9 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  const merged = twMerge(clsx(...inputs));
+  const unique = Array.from(new Set(merged.split(/\s+/).filter(Boolean)));
+  return unique.join(" ");
 }
 
 export const formatCurrency = (value?: number | null) => {

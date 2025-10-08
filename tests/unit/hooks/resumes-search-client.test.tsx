@@ -4,6 +4,10 @@ import { useRouter } from "next/navigation";
 
 import { ResumesSearchClient } from "@/app/resumes/search/search-client";
 
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(() => ({ push: jest.fn() })),
+}));
+
 jest.mock("@/shared/actions", () => ({
   inviteApplicantToInterview: jest.fn().mockResolvedValue(undefined),
 }));
@@ -58,11 +62,15 @@ describe("ResumesSearchClient filters and actions", () => {
       />,
     );
 
-    await user.type(screen.getByPlaceholderText(/Аналитика/i), "Product Manager");
+    const keywordsInput = screen.getByLabelText("Ключевые слова");
+    await user.type(keywordsInput, "Аналитика данных");
+    const professionInput = screen.getByLabelText("Профессия");
+    await user.clear(professionInput);
+    await user.type(professionInput, "Product Manager");
     await user.click(screen.getByRole("checkbox", { name: "1–3 года" }));
     await user.click(screen.getByRole("button", { name: "Сохранить" }));
 
-    expect(push).toHaveBeenCalledWith(expect.stringContaining("profession=Product%20Manager"));
+    expect(push).toHaveBeenCalledWith(expect.stringContaining("profession=Product+Manager"));
     expect(push).toHaveBeenCalledWith(expect.stringContaining("experience=1-3"));
   });
 
