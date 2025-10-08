@@ -5,8 +5,9 @@ import { Role } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 const credentialsProvider = authOptions.providers.find((provider) => provider.id === "credentials");
+const authorize = credentialsProvider?.options?.authorize;
 
-if (!credentialsProvider || typeof credentialsProvider.authorize !== "function") {
+if (!credentialsProvider || typeof authorize !== "function") {
   throw new Error("Credentials provider is not configured");
 }
 
@@ -73,10 +74,10 @@ describe("Auth actions", () => {
       },
     });
 
-    const sessionUser = await credentialsProvider.authorize?.({ email: user.email, password: "secret123" });
+    const sessionUser = await authorize({ email: user.email, password: "secret123" });
     expect(sessionUser).toMatchObject({ email: user.email, role: Role.APPLICANT });
 
-    const invalid = await credentialsProvider.authorize?.({ email: user.email, password: "wrong" });
+    const invalid = await authorize({ email: user.email, password: "wrong" });
     expect(invalid).toBeNull();
   });
 

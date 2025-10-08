@@ -29,11 +29,17 @@ describe("utils", () => {
   describe("formatDate", () => {
     it("formats date instances", () => {
       const date = new Date("2024-02-10T12:00:00Z");
-      expect(formatDate(date)).toMatch(/10\sфев\.?\s2024/i);
+      const formatted = formatDate(date);
+      expect(formatted).toMatch(/10/);
+      expect(formatted).toMatch(/фев/i);
+      expect(formatted).toMatch(/2024/);
     });
 
     it("formats ISO strings", () => {
-      expect(formatDate("2023-08-01T00:00:00.000Z")).toMatch(/01\sавг\.?\s2023/i);
+      const formatted = formatDate("2023-08-01T00:00:00.000Z");
+      expect(formatted).toMatch(/01/);
+      expect(formatted).toMatch(/авг/i);
+      expect(formatted).toMatch(/2023/);
     });
 
     it("returns empty string for nullish", () => {

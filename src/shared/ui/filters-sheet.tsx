@@ -29,6 +29,9 @@ export function FiltersSheet({ children, title, triggerLabel = "Фильтры" 
               <button className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-600">Закрыть</button>
             </Dialog.Close>
           </div>
+          <Dialog.Description className="sr-only">
+            Используйте элементы формы ниже, чтобы настроить параметры фильтрации.
+          </Dialog.Description>
           <div className="flex-1 overflow-y-auto">{children}</div>
         </Dialog.Content>
       </Dialog.Portal>

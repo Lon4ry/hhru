@@ -43,7 +43,12 @@ export async function saveResumeAction(data: unknown) {
       summary: parsed.summary,
       expectedSalary: parsed.expectedSalary,
       employmentType: parsed.employmentType as never,
-      skills: parsed.skills,
+      skills: {
+        deleteMany: {},
+        createMany: {
+          data: parsed.skills.map((skill) => ({ skill })),
+        },
+      },
     },
   });
 
