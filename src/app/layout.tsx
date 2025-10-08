@@ -4,6 +4,8 @@ import Link from "next/link";
 
 import "./globals.css";
 
+import { Role } from "@prisma/client";
+
 import { Providers } from "./providers";
 import { getServerAuthSession } from "@/shared/auth/session";
 
@@ -28,7 +30,7 @@ const links = [
   { href: "/resumes/search", label: "Резюме" },
 ];
 
-const roleLinks: Record<string, { href: string; label: string }> = {
+const roleLinks: Record<Role, { href: string; label: string }> = {
   APPLICANT: {
     href: "/applicant/dashboard",
     label: "Кабинет соискателя",
