@@ -50,7 +50,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerAuthSession();
+  let session: Awaited<ReturnType<typeof getServerAuthSession>> | null = null;
+
+  try {
+    session = await getServerAuthSession();
+  } catch (error) {
+    console.error("Failed to load auth session", error);
+    session = null;
+  }
   const role = session?.user?.role;
   const dashboardLink = role ? roleLinks[role] : null;
 
