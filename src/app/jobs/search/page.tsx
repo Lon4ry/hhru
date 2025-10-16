@@ -21,29 +21,27 @@ export default async function JobsSearchPage({
   const schedule = typeof params.schedule === "string" ? params.schedule : "";
   const salaryFrom = params.salaryFrom ? Number(params.salaryFrom) : undefined;
 
-  const where = {
-    AND: [
-      { isActive: true },
-      q
-        ? {
-            OR: [
-              { title: { contains: q } },
-              { description: { contains: q } },
-              { requirements: { contains: q } },
-            ],
-          }
-        : {},
-      city ? { city } : {},
-      specialization ? { specialization } : {},
-      employmentType ? { employmentType: employmentType as never } : {},
-      schedule ? { schedule: schedule as never } : {},
-      salaryFrom ? { salaryFrom: { gte: salaryFrom } } : {},
-    ],
-  } as const;
-
   const [vacancies, cities, specializations] = await Promise.all([
     prisma.vacancy.findMany({
-      where,
+      where: {
+        AND: [
+          { isActive: true },
+          q
+            ? {
+                OR: [
+                  { title: { contains: q } },
+                  { description: { contains: q } },
+                  { requirements: { contains: q } },
+                ],
+              }
+            : {},
+          city ? { city } : {},
+          specialization ? { specialization } : {},
+          employmentType ? { employmentType: employmentType as never } : {},
+          schedule ? { schedule: schedule as never } : {},
+          salaryFrom ? { salaryFrom: { gte: salaryFrom } } : {},
+        ],
+      },
       include: {
         company: true,
       },
@@ -65,10 +63,11 @@ export default async function JobsSearchPage({
   const applicantId =
     session?.user?.role === "APPLICANT" ? Number(session.user.id) : null;
   const myApplications =
-    session?.user?.id &&
-    (await prisma.application.findMany({
-      where: { resume: { userId: Number(session?.user?.id) } },
-    }));
+    (session?.user?.id &&
+      (await prisma.application.findMany({
+        where: { resume: { userId: Number(session?.user?.id) } },
+      }))) ||
+    [];
 
   return (
     <JobsSearchClient

@@ -23,11 +23,7 @@ const schema = z
       .min(10000, "Значение должно быть больше 10 000"),
     salaryTo: z.coerce
       .number()
-      .min(10000, "Значение должно быть больше 10 000")
-      .refine(
-        (value, ctx) => value >= ctx.parent.salaryFrom,
-        "Верхняя граница не может быть ниже нижней",
-      ),
+      .min(10000, "Значение должно быть больше 10 000"),
   })
   .refine((data) => data.salaryTo - data.salaryFrom <= 500000, {
     message: "Диапазон зарплаты слишком широкий",

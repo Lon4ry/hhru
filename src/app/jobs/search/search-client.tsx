@@ -217,7 +217,7 @@ export function JobsSearchClient({
                   <Button
                     disabled={
                       !applicantId ||
-                      applications.find((a) => a.vacancyId === vacancy.id)
+                      !!applications.find((a) => a.vacancyId === vacancy.id)
                     }
                     loading={isPending}
                     onClick={() => handleApply(vacancy.id)}

@@ -9,6 +9,8 @@ import { Role } from "@prisma/client";
 import { Providers } from "./providers";
 import { getServerAuthSession } from "@/shared/auth/session";
 import { Logout } from "@/app/Logout";
+import { ReportButton } from "@/app/ReportButton";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,46 +70,52 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-slate-50 font-sans antialiased`}
       >
         <Providers>
-          <div className="flex min-h-screen flex-col bg-slate-50">
-            <header className="border-b border-slate-200/60 bg-white/90 backdrop-blur">
-              <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-                <Link href="/" className="text-lg font-semibold text-slate-900">
-                  СтаффТехнолоджи
-                </Link>
-                <nav className="flex items-center gap-6 text-sm font-medium text-slate-600">
-                  {links.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="transition hover:text-slate-900"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+          <Suspense>
+            <div className="flex min-h-screen flex-col bg-slate-50">
+              <header className="border-b border-slate-200/60 bg-white/90 backdrop-blur">
+                <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
                   <Link
-                    href={dashboardLink?.href ?? "/auth/login"}
-                    className="rounded-full bg-slate-900 px-4 py-2 text-white transition hover:bg-slate-700"
+                    href="/"
+                    className="text-lg font-semibold text-slate-900"
                   >
-                    {dashboardLink?.label ?? "Войти"}
+                    СтаффТехнолоджи
                   </Link>
-                  {session?.user && <Logout />}
-                </nav>
-              </div>
-            </header>
-            <main className="flex-1">
-              <div className="mx-auto w-full max-w-6xl px-6 py-10">
-                {children}
-              </div>
-            </main>
-            <footer className="border-t border-slate-200/60 bg-white/90 py-6">
-              <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-                <span>© {new Date().getFullYear()} СтаффТехнолоджи</span>
-                <span>
-                  Сделано для демонстрации возможностей платформы найма
-                </span>
-              </div>
-            </footer>
-          </div>
+                  <nav className="flex items-center gap-6 text-sm font-medium text-slate-600">
+                    {links.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="transition hover:text-slate-900"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                    <Link
+                      href={dashboardLink?.href ?? "/auth/login"}
+                      className="rounded-full bg-slate-900 px-4 py-2 text-white transition hover:bg-slate-700"
+                    >
+                      {dashboardLink?.label ?? "Войти"}
+                    </Link>
+                    {session?.user.role === "ADMIN" && <ReportButton />}
+                    {session?.user && <Logout />}
+                  </nav>
+                </div>
+              </header>
+              <main className="flex-1">
+                <div className="mx-auto w-full max-w-6xl px-6 py-10">
+                  {children}
+                </div>
+              </main>
+              <footer className="border-t border-slate-200/60 bg-white/90 py-6">
+                <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+                  <span>© {new Date().getFullYear()} СтаффТехнолоджи</span>
+                  <span>
+                    Сделано для демонстрации возможностей платформы найма
+                  </span>
+                </div>
+              </footer>
+            </div>
+          </Suspense>
         </Providers>
       </body>
     </html>

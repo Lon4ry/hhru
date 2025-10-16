@@ -17,25 +17,24 @@ export default async function AdminUsersPage({
     redirect("/auth/login");
   }
   const params = await searchParams;
-  const where = {
-    AND: [
-      params.role
-        ? { role: params.role as "APPLICANT" | "EMPLOYER" | "ADMIN" }
-        : {},
-      params.q
-        ? {
-            OR: [
-              { email: { contains: params.q, mode: "insensitive" } },
-              { firstName: { contains: params.q, mode: "insensitive" } },
-              { lastName: { contains: params.q, mode: "insensitive" } },
-            ],
-          }
-        : {},
-    ],
-  } as const;
 
   const users = await prisma.user.findMany({
-    where,
+    where: {
+      AND: [
+        params.role
+          ? { role: params.role as "APPLICANT" | "EMPLOYER" | "ADMIN" }
+          : {},
+        params.q
+          ? {
+              OR: [
+                { email: { contains: params.q } },
+                { firstName: { contains: params.q } },
+                { lastName: { contains: params.q } },
+              ],
+            }
+          : {},
+      ],
+    },
     include: {
       company: true,
       resume: true,

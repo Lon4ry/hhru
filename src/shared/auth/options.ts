@@ -1,7 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
-import type { Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import Credentials from "next-auth/providers/credentials";
-
 import prisma from "@/shared/prisma";
 
 export const authOptions: NextAuthOptions = {
@@ -49,21 +48,24 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: `${user.lastName} ${user.firstName}`.trim(),
           role: user.role,
-        } as unknown as Record<string, unknown>;
+        };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as { role: Role | undefined }).role;
+        token.role = user.role;
+        token.email = user.email;
+        token.name = user.name;
+        token.sub = user.id;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.sub ?? "";
-        session.user.role = token.role;
+        session.user.role = token.role as Role;
       }
       return session;
     },
