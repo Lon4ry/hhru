@@ -15,10 +15,30 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       email: "admin@stafftech.ru",
-      password: "admin123",
+      password: "1234",
       firstName: "Администратор",
       lastName: "Системы",
       role: Role.ADMIN,
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: "applicant@stafftech.ru",
+      password: "123",
+      firstName: "Тест",
+      lastName: "Пользователь",
+      role: Role.APPLICANT,
+    },
+  });
+
+  await prisma.user.create({
+    data: {
+      email: "hr@stafftech.ru",
+      password: "123",
+      firstName: "Тест",
+      lastName: "Работодатель",
+      role: Role.EMPLOYER,
     },
   });
 

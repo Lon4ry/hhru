@@ -2,9 +2,9 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "СтаффТехнолоджи HR",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.stafftechnology.hr",
   "build": {
-    "frontendDist": "./",
+    "frontendDist": "../.next",
     "devUrl": "http://localhost:3000",
     "beforeDevCommand": "next start",
     "beforeBuildCommand": "npm run build"

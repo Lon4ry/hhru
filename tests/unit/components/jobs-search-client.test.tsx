@@ -61,6 +61,7 @@ describe("JobsSearchClient", () => {
   it("renders vacancy card with formatted data", () => {
     render(
       <JobsSearchClient
+        applications={[]}
         vacancies={[baseVacancy]}
         cities={["Москва"]}
         specializations={["Frontend"]}
@@ -88,6 +89,7 @@ describe("JobsSearchClient", () => {
     const user = userEvent.setup();
     render(
       <JobsSearchClient
+        applications={[]}
         vacancies={[baseVacancy]}
         cities={["Москва"]}
         specializations={["Frontend"]}
@@ -109,6 +111,7 @@ describe("JobsSearchClient", () => {
     const user = userEvent.setup();
     render(
       <JobsSearchClient
+        applications={[]}
         vacancies={[baseVacancy]}
         cities={["Москва"]}
         specializations={["Frontend"]}
@@ -132,6 +135,7 @@ describe("JobsSearchClient", () => {
 
     render(
       <JobsSearchClient
+        applications={[]}
         vacancies={[baseVacancy]}
         cities={["Москва", "Казань"]}
         specializations={["Frontend", "Backend"]}
